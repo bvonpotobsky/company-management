@@ -38,6 +38,7 @@ const NewInvoiceForm = () => {
       amount: 0,
       description: "",
       billTo: "",
+      dueDate: new Date(),
     },
   });
 
@@ -62,12 +63,11 @@ const NewInvoiceForm = () => {
 
   return (
     <Dialog open={isDialogOpen}>
-      <DialogTrigger className="flex rounded-2xl p-2" asChild>
-        <Button onClick={() => setIsDialogOpen(true)}>
-          <PlusCircle className="mr-2" />
-          New
-        </Button>
-      </DialogTrigger>
+      <Button onClick={() => setIsDialogOpen(true)} size="sm">
+        <PlusCircle className="mr-2" />
+        New
+      </Button>
+
       <DialogContent className="h-full">
         <Form {...form}>
           <Button
@@ -164,6 +164,7 @@ const NewInvoiceForm = () => {
             <div className="space-x-1">
               <DialogTrigger asChild>
                 <Button
+                  size="sm"
                   variant="destructive"
                   onClick={() => {
                     form.reset();
@@ -174,7 +175,7 @@ const NewInvoiceForm = () => {
                 </Button>
               </DialogTrigger>
 
-              <Button type="submit" disabled={isAddingInvoice}>
+              <Button type="submit" disabled={isAddingInvoice} size="sm">
                 {!isAddingInvoice ? "Add" : "Adding..."}
               </Button>
             </div>

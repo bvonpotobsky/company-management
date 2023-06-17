@@ -6,6 +6,7 @@ import LayoutEmployee from "~/components/Layout.employee";
 import NewInvoiceForm from "~/components/NewInvoice";
 import {Badge} from "~/components/ui/badge";
 import {Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle} from "~/components/ui/card";
+import {nFormatter} from "~/lib/utils";
 
 import {api} from "~/utils/api";
 
@@ -36,8 +37,11 @@ const Invoices: NextPage = () => {
                 <p>Due: {format(invoice.dueDate, "PPP")}</p>
               </CardContent>
               <CardFooter className="flex flex-row items-center justify-between">
-                <p>${invoice.amount}</p>
-                <Badge variant={invoice.paid ? "default" : "destructive"}>{invoice.paid ? "Paid" : "Pending"}</Badge>
+                {/* ToDo: Format number, add coma */}
+                <p className="font-bold">${nFormatter(invoice.amount, 4)}</p>
+                <Badge variant={invoice.paid ? "paid" : "pending"} className="rounded-sm">
+                  {invoice.paid ? "Paid" : "Pending"}
+                </Badge>
               </CardFooter>
             </Card>
           ))}
