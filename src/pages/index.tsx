@@ -1,11 +1,13 @@
 import {type NextPage} from "next";
-import {signIn, signOut, useSession} from "next-auth/react";
 import Head from "next/head";
 import Link from "next/link";
-import {api} from "~/utils/api";
+
+import {Button} from "~/components/ui/button";
+
+import {signIn, signOut, useSession} from "next-auth/react";
 
 const Home: NextPage = () => {
-  const hello = api.example.hello.useQuery({text: "from tRPC"});
+  const {data: session} = useSession();
 
   return (
     <>
@@ -15,36 +17,36 @@ const Home: NextPage = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-b from-[#2e026d] to-[#15162c]">
-        <div className="container flex flex-col items-center justify-center gap-12 px-4 py-16 ">
-          <h1 className="text-5xl font-extrabold tracking-tight text-white sm:text-[5rem]">
-            Create <span className="text-[hsl(280,100%,70%)]">T3</span> App
+        <div className="container flex flex-col items-center justify-center gap-8 px-4 py-8">
+          <h1 className="text-3xl font-extrabold tracking-normal text-white sm:text-[5rem]">
+            <span className="text-[hsl(280,100%,70%)]">EasyInvoice</span>
           </h1>
+          <p className="font-bold">Effortlessly Create, Send, and Manage Invoices</p>
+
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:gap-8">
-            <Link
-              className="flex max-w-xs flex-col gap-4 rounded-xl bg-white/10 p-4 text-white hover:bg-white/20"
-              href="https://create.t3.gg/en/usage/first-steps"
-              target="_blank"
-            >
+            <div className="flex max-w-xs flex-col gap-4 rounded-xl bg-white/10 p-4 text-white hover:bg-white/20">
               <h3 className="text-2xl font-bold">First Steps →</h3>
-              <div className="text-lg">
-                Just the basics - Everything you need to know to set up your database and authentication.
-              </div>
-            </Link>
-            <Link
-              className="flex max-w-xs flex-col gap-4 rounded-xl bg-white/10 p-4 text-white hover:bg-white/20"
-              href="https://create.t3.gg/en/introduction"
-              target="_blank"
-            >
-              <h3 className="text-2xl font-bold">Documentation →</h3>
-              <div className="text-lg">
-                Learn more about Create T3 App, the libraries it uses, and how to deploy it.
-              </div>
-            </Link>
+              <div className="text-lg">Log in and start managing your invoices. </div>
+              <Button variant="default" size={"sm"} onClick={session ? () => void signOut() : () => void signIn()}>
+                {session ? "Sign out" : "Sign in"}
+              </Button>
+              <Button size={"sm"} variant={"link"} asChild>
+                <Link href="employee/dashboard/invoices">Invoices</Link>
+              </Button>
+            </div>
           </div>
-          <div className="flex flex-col items-center gap-2">
-            <p className="text-2xl text-white">{hello.data ? hello.data.greeting : "Loading tRPC query..."}</p>
-            <AuthShowcase />
-          </div>
+
+          <p className="px-2 text-lg font-semibold">
+            Welcome to EasyInvoice, the hassle-free solution for effortless invoicing. Say goodbye to complex
+            spreadsheets and time-consuming paperwork.
+          </p>
+
+          {/* <p>
+            With EasyInvoice, creating, sending, and managing invoices is a breeze. Enjoy the convenience of automated
+            invoicing, personalized branding, and real-time tracking. Whether you're a freelancer or a small business
+            owner, EasyInvoice streamlines your financial management. Start optimizing your invoicing process today with
+            EasyInvoice.
+          </p> */}
         </div>
       </main>
     </>
@@ -52,27 +54,3 @@ const Home: NextPage = () => {
 };
 
 export default Home;
-
-const AuthShowcase: React.FC = () => {
-  const {data: sessionData} = useSession();
-
-  const {data: secretMessage} = api.example.getSecretMessage.useQuery(
-    undefined, // no input
-    {enabled: sessionData?.user !== undefined}
-  );
-
-  return (
-    <div className="flex flex-col items-center justify-center gap-4">
-      <p className="text-center text-2xl text-white">
-        {sessionData && <span>Logged in as {sessionData.user?.name}</span>}
-        {secretMessage && <span> - {secretMessage}</span>}
-      </p>
-      <button
-        className="rounded-full bg-white/10 px-10 py-3 font-semibold text-white no-underline transition hover:bg-white/20"
-        onClick={sessionData ? () => void signOut() : () => void signIn()}
-      >
-        {sessionData ? "Sign out" : "Sign in"}
-      </button>
-    </div>
-  );
-};
