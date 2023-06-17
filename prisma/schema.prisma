@@ -7,8 +7,9 @@ generator client {
 }
 
 datasource db {
-  provider = "mysql"
-  url      = env("DATABASE_URL")
+  provider     = "mysql"
+  url          = env("DATABASE_URL")
+  relationMode = "prisma"
 }
 
 // Necessary for Next auth
@@ -58,10 +59,14 @@ model VerificationToken {
 }
 
 model Invoice {
-  id          String  @id @default(cuid())
-  userId      String
+  id          String   @id @default(cuid())
   amount      Int
   description String
-  paid        Boolean
-  user        User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  paid        Boolean // This could be a relation to a payment
+  billTo      String // One day this could be a relation to a user or a company
+  date        DateTime @default(now()) // This is the date the invoice was created
+  dueDate     DateTime // This is the date the invoice is due
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 }

@@ -1,33 +1,43 @@
+import {useState} from "react";
 import * as z from "zod";
+
+import {cn} from "~/lib/utils";
+import {format} from "date-fns";
 
 import {useForm} from "react-hook-form";
 import {zodResolver} from "@hookform/resolvers/zod";
 
-import {Dialog, DialogContent, DialogTrigger} from "~/components/ui/dialog";
-import {Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage} from "./ui/form";
 import {Button} from "./ui/button";
 import {Input} from "./ui/input";
+import {Dialog, DialogContent, DialogTrigger} from "~/components/ui/dialog";
+import {Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage} from "./ui/form";
+import {Popover, PopoverContent, PopoverTrigger} from "./ui/popover";
 
-import {PlusCircle, X} from "lucide-react";
+import {CalendarIcon, PlusCircle, X} from "lucide-react";
+import {Calendar} from "./ui/calendar";
+
 import {api} from "~/utils/api";
-import {useState} from "react";
 
 export const NewInvoiceSchema = z.object({
   amount: z.coerce.number().positive().int().min(1),
   description: z.string().min(1),
-  paid: z.boolean().default(false),
+  paid: z.boolean().default(false), // ToDo: Think about this
+  billTo: z.string().min(1),
+  dueDate: z.date(),
 });
 
 const NewInvoiceForm = () => {
   const [isDialogOpen, setIsDialogOpen] = useState<boolean>(false);
 
   const {mutate, isLoading: isAddingInvoice} = api.invoice.addNewInvoice.useMutation();
+  const ctx = api.useContext();
 
   const form = useForm<z.infer<typeof NewInvoiceSchema>>({
     resolver: zodResolver(NewInvoiceSchema),
     defaultValues: {
       amount: 0,
       description: "",
+      billTo: "",
     },
   });
 
@@ -37,9 +47,12 @@ const NewInvoiceForm = () => {
         amount: data.amount,
         description: data.description,
         paid: data.paid,
+        billTo: data.billTo,
+        dueDate: data.dueDate,
       },
       {
         onSuccess: () => {
+          void ctx.invoice.getAllCurrentUser.invalidate();
           form.reset();
           setIsDialogOpen(false);
         },
@@ -68,6 +81,20 @@ const NewInvoiceForm = () => {
           <form onSubmit={(...args) => void form.handleSubmit(onSubmit)(...args)} className="w-2/3 space-y-6">
             <FormField
               control={form.control}
+              name="billTo"
+              render={({field}) => (
+                <FormItem>
+                  <FormLabel>Bill to</FormLabel>
+                  <FormControl>
+                    <Input type="text" placeholder="Alphabet Inc" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
               name="amount"
               render={({field}) => (
                 <FormItem>
@@ -79,6 +106,7 @@ const NewInvoiceForm = () => {
                 </FormItem>
               )}
             />
+
             <FormField
               control={form.control}
               name="description"
@@ -86,13 +114,53 @@ const NewInvoiceForm = () => {
                 <FormItem>
                   <FormLabel>Description</FormLabel>
                   <FormControl>
-                    <Input placeholder="shadcn" {...field} />
+                    <Input placeholder="e.g. Website design and development" {...field} />
                   </FormControl>
                   <FormDescription>It will be displayed on the invoice.</FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
             />
+
+            <FormField
+              control={form.control}
+              name="dueDate"
+              render={({field}) => (
+                <FormItem className="flex flex-col">
+                  <FormLabel>Due date</FormLabel>
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <FormControl>
+                        <Button
+                          variant="outline"
+                          className={cn(
+                            "w-[240px] pl-3 text-left font-normal",
+                            !field.value && "text-muted-foreground"
+                          )}
+                        >
+                          {field.value ? format(field.value, "PPP") : <span>Pick a date</span>}
+                          <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                        </Button>
+                      </FormControl>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-auto p-0" align="start">
+                      <Calendar
+                        mode="single"
+                        selected={field.value}
+                        onSelect={field.onChange}
+                        disabled={(date) => date < new Date("1900-01-01")}
+                        initialFocus
+                      />
+                    </PopoverContent>
+                  </Popover>
+                  <FormDescription>
+                    The invoice will be marked as overdue if it is not paid by the due date.
+                  </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
             <div className="space-x-1">
               <DialogTrigger asChild>
                 <Button

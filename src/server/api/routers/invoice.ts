@@ -1,6 +1,6 @@
 import {z} from "zod";
 import {NewInvoiceSchema} from "~/components/NewInvoice";
-import {createTRPCRouter, publicProcedure, protectedProcedure} from "~/server/api/trpc";
+import {createTRPCRouter, protectedProcedure} from "~/server/api/trpc";
 
 export const invoiceRouter = createTRPCRouter({
   getAllCurrentUser: protectedProcedure.query(({ctx}) => {
@@ -18,8 +18,10 @@ export const invoiceRouter = createTRPCRouter({
       data: {
         userId: ctx.session.user.id,
         amount: input.amount,
-        paid: input.paid ?? false,
+        paid: input.paid,
         description: input.description,
+        billTo: input.billTo,
+        dueDate: input.dueDate,
       },
     });
 
