@@ -1,6 +1,6 @@
-import {z} from "zod";
-import {NewInvoiceSchema} from "~/components/NewInvoice";
 import {createTRPCRouter, protectedProcedure} from "~/server/api/trpc";
+
+import {NewInvoiceSchema} from "~/components/NewInvoice";
 
 export const invoiceRouter = createTRPCRouter({
   getAllCurrentUser: protectedProcedure.query(({ctx}) => {
