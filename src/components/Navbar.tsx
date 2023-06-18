@@ -1,10 +1,9 @@
-import {Avatar, AvatarFallback, AvatarImage} from "~/components/ui/avatar";
-import {Button} from "./ui/button";
-import {Moon, Sun} from "lucide-react";
 import {useTheme} from "next-themes";
 import {useMounted} from "~/hooks/use-mounted";
-import {signOut, useSession} from "next-auth/react";
 import {getNameInitials} from "~/lib/utils";
+
+import {Avatar, AvatarFallback, AvatarImage} from "~/components/ui/avatar";
+import {Button} from "./ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -14,16 +13,30 @@ import {
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
 
+import {Moon, Sun} from "lucide-react";
+
+import {signOut, useSession} from "next-auth/react";
+
+// ToDo: Make logo or something. Name???
+import {Acme} from "next/font/google";
+const font = Acme({
+  weight: "400",
+  display: "swap",
+  subsets: ["latin"],
+});
+
 const Navbar = () => {
-  const mounted = useMounted();
+  const {data: session} = useSession();
 
   const {theme, setTheme} = useTheme();
 
-  const {data: session} = useSession();
+  const mounted = useMounted();
 
   return (
     <nav className="flex w-full items-center justify-end space-x-2 p-2">
-      <h1 className="mr-auto">Logo</h1>
+      <h1 className="mr-auto" style={font.style}>
+        IMK
+      </h1>
 
       {mounted && (
         <Button variant="ghost" size="sm" onClick={() => setTheme(theme === "light" ? "dark" : "light")}>

@@ -1,10 +1,9 @@
 import {type NextPage} from "next";
 import Head from "next/head";
 import Link from "next/link";
-import {Suspense} from "react";
 
 import {format} from "date-fns";
-import {nFormatter} from "~/lib/utils";
+import {getTotalInvoiceAmount, nFormatter} from "~/lib/utils";
 
 import {Badge} from "~/components/ui/badge";
 import {Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle} from "~/components/ui/card";
@@ -12,8 +11,10 @@ import {Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle} f
 import LayoutEmployee from "~/components/Layout.employee";
 import NewInvoiceForm from "~/components/NewInvoice";
 
-import {api} from "~/utils/api";
 import LoadingInvoices from "~/components/loading/loading.invoices";
+
+import {api} from "~/utils/api";
+import type {Item} from "@prisma/client";
 
 const Invoices: NextPage = () => {
   const {data: invoices, isLoading: isLoadingInvoices} = api.invoice.getAllCurrentUser.useQuery();
@@ -37,18 +38,18 @@ const Invoices: NextPage = () => {
               <Card>
                 <CardHeader className="flex flex-row items-center justify-between">
                   <CardTitle>{invoice.clientName}</CardTitle>
-                  <CardDescription>{format(invoice.date, "PPP")}</CardDescription>
+                  <CardDescription>{invoice.clientEmail}</CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <p>Due: {format(invoice.dueDate, "PPP")}</p>
+                  <CardDescription>Due: {format(invoice.dueDate, "PPP")}</CardDescription>
                 </CardContent>
                 <CardFooter className="flex flex-row items-center justify-between">
                   {/* ToDo: Format number, add coma */}
-                  {/* <p className="font-bold">${nFormatter(invoice.amount, 4)}</p> */}
+                  <p className="font-bold">${nFormatter(getTotalInvoiceAmount(invoice.Items), 4)}</p>
                   <Badge
                     // ToDo: This should be straight from invoice.status
                     variant={invoice.status === "paid" ? "paid" : invoice.status === "pending" ? "pending" : "draft"}
-                    className="rounded-sm"
+                    className="rounded-sm text-sm"
                   >
                     <span className="capitalize">{invoice.status}</span>
                   </Badge>

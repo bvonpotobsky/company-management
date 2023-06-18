@@ -1,3 +1,4 @@
+import {Item} from "@prisma/client";
 import {type ClassValue, clsx} from "clsx";
 import {twMerge} from "tailwind-merge";
 
@@ -42,4 +43,8 @@ export const getNameInitials = (fullName: string) => {
   const initials = names.map((name) => name.charAt(0).toUpperCase()).join("");
 
   return initials;
+};
+
+export const getTotalInvoiceAmount = (items: Item[]): number => {
+  return items.reduce((acc, item) => acc + item.price, 0);
 };
