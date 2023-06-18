@@ -14,7 +14,6 @@ import NewInvoiceForm from "~/components/NewInvoice";
 import LoadingInvoices from "~/components/loading/loading.invoices";
 
 import {api} from "~/utils/api";
-import type {Item} from "@prisma/client";
 
 const Invoices: NextPage = () => {
   const {data: invoices, isLoading: isLoadingInvoices} = api.invoice.getAllCurrentUser.useQuery();

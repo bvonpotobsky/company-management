@@ -25,6 +25,9 @@ export const invoiceRouter = createTRPCRouter({
       where: {
         id: input.id,
       },
+      include: {
+        Items: true,
+      },
     });
 
     if (!invoice) {

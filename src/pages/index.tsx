@@ -31,18 +31,22 @@ const Home: NextPage = () => {
             <div className="flex max-w-xs flex-col items-center gap-4 rounded-xl bg-white/10 p-4 text-white hover:bg-white/20">
               <h3 className="text-2xl font-bold">First Steps →</h3>
               <div className="text-lg">Start managing your invoices.</div>
-              <Avatar
-                className="h-8 w-8 border border-gray-700 dark:border dark:border-gray-500 sm:h-10 sm:w-10"
-                asChild
-              >
-                <Link href="employee/dashboard/invoices">
-                  <AvatarImage
-                    src={session?.user.image ?? undefined}
-                    alt={`Profile picture of ${session?.user.name ?? "user logged"}`}
-                  />
-                  <AvatarFallback>{getNameInitials(session?.user.name ?? "AA")}</AvatarFallback>
-                </Link>
-              </Avatar>
+
+              {session && (
+                <Avatar
+                  className="h-8 w-8 border border-gray-700 dark:border dark:border-gray-500 sm:h-10 sm:w-10"
+                  asChild
+                >
+                  <Link href="employee/dashboard/invoices">
+                    <AvatarImage
+                      src={session?.user.image ?? undefined}
+                      alt={`Profile picture of ${session?.user.name ?? "user logged"}`}
+                    />
+                    <AvatarFallback>{getNameInitials(session?.user.name ?? "AA")}</AvatarFallback>
+                  </Link>
+                </Avatar>
+              )}
+
               <Button variant="default" size={"sm"} onClick={session ? () => void signOut() : () => void signIn()}>
                 {session ? "Sign out" : "Sign in"}
               </Button>
