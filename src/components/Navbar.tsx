@@ -3,8 +3,16 @@ import {Button} from "./ui/button";
 import {Moon, Sun} from "lucide-react";
 import {useTheme} from "next-themes";
 import {useMounted} from "~/hooks/use-mounted";
-import {useSession} from "next-auth/react";
+import {signOut, useSession} from "next-auth/react";
 import {getNameInitials} from "~/lib/utils";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "./ui/dropdown-menu";
 
 const Navbar = () => {
   const mounted = useMounted();
@@ -23,10 +31,24 @@ const Navbar = () => {
         </Button>
       )}
 
-      <Avatar className="h-8 w-8 border sm:h-10 sm:w-10">
-        <AvatarImage src={session?.user.image ?? undefined} alt="@shadcn" />
-        <AvatarFallback>{getNameInitials(session?.user.name ?? "AA")}</AvatarFallback>
-      </Avatar>
+      <DropdownMenu>
+        <DropdownMenuTrigger>
+          <Avatar className="h-8 w-8 border sm:h-10 sm:w-10">
+            <AvatarImage src={session?.user.image ?? undefined} alt="@shadcn" />
+            <AvatarFallback>{getNameInitials(session?.user.name ?? "AA")}</AvatarFallback>
+          </Avatar>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent className="space-y-2 [&>*]:cursor-pointer">
+          <DropdownMenuLabel>Account</DropdownMenuLabel>
+          <DropdownMenuSeparator />
+          <DropdownMenuItem>Profile</DropdownMenuItem>
+          <DropdownMenuItem>
+            <Button variant="destructive" size="sm" className="w-full cursor-pointer" onClick={() => void signOut()}>
+              Sign out
+            </Button>
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
     </nav>
   );
 };
