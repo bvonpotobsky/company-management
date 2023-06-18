@@ -5,6 +5,8 @@ import Link from "next/link";
 import {Button} from "~/components/ui/button";
 
 import {signIn, signOut, useSession} from "next-auth/react";
+import {Avatar, AvatarFallback, AvatarImage} from "~/components/ui/avatar";
+import {getNameInitials} from "~/lib/utils";
 
 const Home: NextPage = () => {
   const {data: session} = useSession();
@@ -18,25 +20,36 @@ const Home: NextPage = () => {
       </Head>
       <main className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-b from-[#2e026d] to-[#15162c]">
         <div className="container flex flex-col items-center justify-center gap-8 px-4 py-8">
-          <h1 className="text-3xl font-extrabold tracking-normal text-white sm:text-[5rem]">
-            <span className="text-[hsl(280,100%,70%)]">EasyInvoice</span>
+          <h1 className="text-3xl font-extrabold tracking-normal text-[hsl(280,100%,70%)] sm:text-[5rem]">
+            EasyInvoice
           </h1>
-          <p className="font-bold">Effortlessly Create, Send, and Manage Invoices</p>
+          <p className="text-center text-sm font-bold text-white sm:text-lg">
+            Effortlessly Create, Send, and Manage Invoices
+          </p>
 
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:gap-8">
-            <div className="flex max-w-xs flex-col gap-4 rounded-xl bg-white/10 p-4 text-white hover:bg-white/20">
+          <div className="grid grid-cols-1 gap-4 md:gap-8">
+            <div className="flex max-w-xs flex-col items-center gap-4 rounded-xl bg-white/10 p-4 text-white hover:bg-white/20">
               <h3 className="text-2xl font-bold">First Steps →</h3>
-              <div className="text-lg">Log in and start managing your invoices. </div>
+              <div className="text-lg">Start managing your invoices.</div>
+              <Avatar
+                className="h-8 w-8 border border-gray-700 dark:border dark:border-gray-500 sm:h-10 sm:w-10"
+                asChild
+              >
+                <Link href="employee/dashboard/invoices">
+                  <AvatarImage
+                    src={session?.user.image ?? undefined}
+                    alt={`Profile picture of ${session?.user.name ?? "user logged"}`}
+                  />
+                  <AvatarFallback>{getNameInitials(session?.user.name ?? "AA")}</AvatarFallback>
+                </Link>
+              </Avatar>
               <Button variant="default" size={"sm"} onClick={session ? () => void signOut() : () => void signIn()}>
                 {session ? "Sign out" : "Sign in"}
-              </Button>
-              <Button size={"sm"} variant={"link"} asChild>
-                <Link href="employee/dashboard/invoices">Invoices</Link>
               </Button>
             </div>
           </div>
 
-          <p className="px-2 text-lg font-semibold">
+          <p className="max-w-2xl px-2 text-lg font-semibold text-white">
             Welcome to EasyInvoice, the hassle-free solution for effortless invoicing. Say goodbye to complex
             spreadsheets and time-consuming paperwork.
           </p>
