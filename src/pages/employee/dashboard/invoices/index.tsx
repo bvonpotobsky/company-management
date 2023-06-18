@@ -1,6 +1,7 @@
 import {type NextPage} from "next";
 import Head from "next/head";
 import Link from "next/link";
+import {Suspense} from "react";
 
 import {format} from "date-fns";
 import {nFormatter} from "~/lib/utils";
@@ -12,9 +13,10 @@ import LayoutEmployee from "~/components/Layout.employee";
 import NewInvoiceForm from "~/components/NewInvoice";
 
 import {api} from "~/utils/api";
+import LoadingInvoices from "~/components/loading/loading.invoices";
 
 const Invoices: NextPage = () => {
-  const {data: invoices} = api.invoice.getAllCurrentUser.useQuery();
+  const {data: invoices, isLoading: isLoadingInvoices} = api.invoice.getAllCurrentUser.useQuery();
 
   return (
     <>
@@ -28,7 +30,7 @@ const Invoices: NextPage = () => {
           <h3 className="scroll-m-20 text-2xl font-semibold tracking-tight">Invoices</h3>
           <NewInvoiceForm />
         </section>
-
+        {isLoadingInvoices && <LoadingInvoices />} {/* I would like to handle this with suspense */}
         <section className="flex flex-col space-y-2 p-2">
           {invoices?.map((invoice) => (
             <Link href={`/employee/dashboard/invoices/${invoice.id}`} key={invoice.id}>
