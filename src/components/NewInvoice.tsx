@@ -2,7 +2,7 @@ import {useState} from "react";
 import * as z from "zod";
 
 import {cn} from "~/lib/utils";
-import {format} from "date-fns";
+import {add, format} from "date-fns";
 
 import {useForm} from "react-hook-form";
 import {zodResolver} from "@hookform/resolvers/zod";
@@ -12,6 +12,7 @@ import {Input} from "./ui/input";
 import {Dialog, DialogContent, DialogTrigger} from "~/components/ui/dialog";
 import {Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage} from "./ui/form";
 import {Popover, PopoverContent, PopoverTrigger} from "./ui/popover";
+import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "./ui/select";
 
 import {CalendarIcon, PlusCircle, X} from "lucide-react";
 import {Calendar} from "./ui/calendar";
@@ -19,11 +20,13 @@ import {Calendar} from "./ui/calendar";
 import {api} from "~/utils/api";
 
 export const NewInvoiceSchema = z.object({
-  amount: z.coerce.number().positive().int().min(1),
+  clientName: z.string().min(1),
+  clientEmail: z.string().email(),
   description: z.string().min(1),
-  paid: z.boolean().default(false), // ToDo: Think about this
-  billTo: z.string().min(1),
-  dueDate: z.date(),
+  amount: z.coerce.number().positive().int().min(1),
+  date: z.date(),
+  paymentTerms: z.string().min(1),
+  status: z.enum(["paid", "pending", "draft"]),
 });
 
 const NewInvoiceForm = () => {
@@ -37,19 +40,22 @@ const NewInvoiceForm = () => {
     defaultValues: {
       amount: 0,
       description: "",
-      billTo: "",
-      dueDate: new Date(),
+      clientName: "",
+      clientEmail: "",
+      status: "pending",
     },
   });
 
   const onSubmit = (data: z.infer<typeof NewInvoiceSchema>) => {
     mutate(
       {
+        clientName: data.clientName,
+        clientEmail: data.clientEmail,
+        status: data.status,
         amount: data.amount,
         description: data.description,
-        paid: data.paid,
-        billTo: data.billTo,
-        dueDate: data.dueDate,
+        date: data.date,
+        paymentTerms: data.paymentTerms,
       },
       {
         onSuccess: () => {
@@ -78,13 +84,89 @@ const NewInvoiceForm = () => {
           <form onSubmit={(...args) => void form.handleSubmit(onSubmit)(...args)} className="w-2/3 space-y-6">
             <FormField
               control={form.control}
-              name="billTo"
+              name="clientName"
               render={({field}) => (
                 <FormItem>
-                  <FormLabel>Bill to</FormLabel>
+                  <FormLabel>Client&#39;s Name</FormLabel>
                   <FormControl>
                     <Input type="text" placeholder="Alphabet Inc" {...field} />
                   </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="clientEmail"
+              render={({field}) => (
+                <FormItem>
+                  <FormLabel>Client&#39;s Email</FormLabel>
+                  <FormControl>
+                    <Input type="email" placeholder="alphabet@google.com" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="date"
+              render={({field}) => (
+                <FormItem className="flex flex-col">
+                  <FormLabel>Invoice Date</FormLabel>
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <FormControl>
+                        <Button
+                          variant="outline"
+                          className={cn(
+                            "w-[240px] pl-3 text-left font-normal",
+                            !field.value && "text-muted-foreground"
+                          )}
+                        >
+                          {field.value ? format(field.value, "PPP") : <span>Pick a date</span>}
+                          <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                        </Button>
+                      </FormControl>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-auto p-0" align="start">
+                      <Calendar
+                        mode="single"
+                        selected={field.value}
+                        onSelect={field.onChange}
+                        disabled={(date) => date < new Date("1900-01-01")}
+                        initialFocus
+                      />
+                    </PopoverContent>
+                  </Popover>
+
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="paymentTerms"
+              render={({field}) => (
+                <FormItem>
+                  <FormLabel>Payment Terms</FormLabel>
+                  <Select onValueChange={field.onChange} defaultValue={field.value}>
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select a payment term" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      <SelectItem value="30">Next 30 days</SelectItem>
+                      <SelectItem value="7">1 week</SelectItem>
+                      <SelectItem value="90">3 months</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <FormDescription>
+                    The payment terms specify the number of days that are available to the client to pay the invoice.
+                  </FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
@@ -119,45 +201,6 @@ const NewInvoiceForm = () => {
               )}
             />
 
-            <FormField
-              control={form.control}
-              name="dueDate"
-              render={({field}) => (
-                <FormItem className="flex flex-col">
-                  <FormLabel>Due date</FormLabel>
-                  <Popover>
-                    <PopoverTrigger asChild>
-                      <FormControl>
-                        <Button
-                          variant="outline"
-                          className={cn(
-                            "w-[240px] pl-3 text-left font-normal",
-                            !field.value && "text-muted-foreground"
-                          )}
-                        >
-                          {field.value ? format(field.value, "PPP") : <span>Pick a date</span>}
-                          <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                        </Button>
-                      </FormControl>
-                    </PopoverTrigger>
-                    <PopoverContent className="w-auto p-0" align="start">
-                      <Calendar
-                        mode="single"
-                        selected={field.value}
-                        onSelect={field.onChange}
-                        disabled={(date) => date < new Date("1900-01-01")}
-                        initialFocus
-                      />
-                    </PopoverContent>
-                  </Popover>
-                  <FormDescription>
-                    The invoice will be marked as overdue if it is not paid by the due date.
-                  </FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
             <div className="space-x-1">
               <DialogTrigger asChild>
                 <Button
@@ -172,8 +215,8 @@ const NewInvoiceForm = () => {
                 </Button>
               </DialogTrigger>
 
-              <Button type="submit" disabled={isAddingInvoice} size="sm">
-                {!isAddingInvoice ? "Add" : "Adding..."}
+              <Button disabled={isAddingInvoice} size="sm" asChild>
+                <input type="submit" value={!isAddingInvoice ? "Add" : "Adding..."} />
               </Button>
             </div>
           </form>

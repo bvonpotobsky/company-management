@@ -1,9 +1,10 @@
 import {createTRPCRouter, protectedProcedure} from "~/server/api/trpc";
+import {TRPCError} from "@trpc/server";
+
+import {z} from "zod";
+import {addDays} from "date-fns";
 
 import {NewInvoiceSchema} from "~/components/NewInvoice";
-import {z} from "zod";
-import {TRPCClientError} from "@trpc/client";
-import {TRPCError} from "@trpc/server";
 
 export const invoiceRouter = createTRPCRouter({
   getAllCurrentUser: protectedProcedure.query(async ({ctx}) => {
@@ -38,11 +39,14 @@ export const invoiceRouter = createTRPCRouter({
     const invoice = ctx.prisma.invoice.create({
       data: {
         userId: ctx.session.user.id,
-        amount: input.amount,
-        paid: input.paid,
+        clientName: input.clientName,
+        clientEmail: input.clientEmail,
+        status: input.status,
+        date: input.date,
+        paymentTerms: parseInt(input.paymentTerms),
+        dueDate: addDays(input.date, parseInt(input.paymentTerms)), // ToDo: Test this
         description: input.description,
-        billTo: input.billTo,
-        dueDate: input.dueDate,
+        amount: input.amount,
       },
     });
 

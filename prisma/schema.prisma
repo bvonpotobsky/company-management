@@ -63,17 +63,38 @@ model VerificationToken {
 
 // End of Next auth
 
+enum InvoiceStatus {
+  paid
+  pending
+  draft
+}
+
 model Invoice {
-  id          String   @id @default(cuid())
-  amount      Int
-  description String
-  paid        Boolean // This could be a relation to a payment
-  billTo      String // One day this could be a relation to a user or a company
-  date        DateTime @default(now()) // This is the date the invoice was created
-  dueDate     DateTime // This is the date the invoice is due
+  id           String        @id @default(cuid())
+  amount       Int
+  description  String
+  status       InvoiceStatus
+  clientName   String
+  clientEmail  String
+  date         DateTime
+  paymentTerms DateTime
+  dueDate      DateTime // Due date is calculated from date + paymentTerms
 
   userId String
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  Items  Item[]
 
   @@index([userId])
+}
+
+model Item {
+  id          String   @id @default(cuid())
+  name        String
+  quantity    Int
+  price       Int
+  description String? // Should this be a relation to a product?
+  Invoice     Invoice? @relation(fields: [invoiceId], references: [id])
+  invoiceId   String?
+
+  @@index([invoiceId])
 }

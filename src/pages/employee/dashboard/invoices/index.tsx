@@ -34,7 +34,7 @@ const Invoices: NextPage = () => {
             <Link href={`/employee/dashboard/invoices/${invoice.id}`} key={invoice.id}>
               <Card>
                 <CardHeader className="flex flex-row items-center justify-between">
-                  <CardTitle>{invoice.billTo}</CardTitle>
+                  <CardTitle>{invoice.clientName}</CardTitle>
                   <CardDescription>{format(invoice.date, "PPP")}</CardDescription>
                 </CardHeader>
                 <CardContent>
@@ -43,8 +43,8 @@ const Invoices: NextPage = () => {
                 <CardFooter className="flex flex-row items-center justify-between">
                   {/* ToDo: Format number, add coma */}
                   <p className="font-bold">${nFormatter(invoice.amount, 4)}</p>
-                  <Badge variant={invoice.paid ? "paid" : "pending"} className="rounded-sm">
-                    {invoice.paid ? "Paid" : "Pending"}
+                  <Badge variant={invoice.status ? "paid" : "pending"} className="rounded-sm">
+                    <span className="capitalize">{invoice.status}</span>
                   </Badge>
                 </CardFooter>
               </Card>
