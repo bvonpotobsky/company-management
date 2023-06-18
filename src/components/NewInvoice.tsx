@@ -1,8 +1,8 @@
 import {useState} from "react";
-import * as z from "zod";
 
+import * as z from "zod";
 import {cn} from "~/lib/utils";
-import {add, format} from "date-fns";
+import {format} from "date-fns";
 
 import {useForm} from "react-hook-form";
 import {zodResolver} from "@hookform/resolvers/zod";
@@ -25,7 +25,7 @@ export const NewInvoiceSchema = z.object({
   description: z.string().min(1),
   amount: z.coerce.number().positive().int().min(1),
   date: z.date(),
-  paymentTerms: z.string().min(1),
+  paymentTermsDays: z.string().min(1),
   status: z.enum(["paid", "pending", "draft"]),
 });
 
@@ -55,7 +55,7 @@ const NewInvoiceForm = () => {
         amount: data.amount,
         description: data.description,
         date: data.date,
-        paymentTerms: data.paymentTerms,
+        paymentTermsDays: data.paymentTermsDays,
       },
       {
         onSuccess: () => {
@@ -148,7 +148,7 @@ const NewInvoiceForm = () => {
 
             <FormField
               control={form.control}
-              name="paymentTerms"
+              name="paymentTermsDays"
               render={({field}) => (
                 <FormItem>
                   <FormLabel>Payment Terms</FormLabel>

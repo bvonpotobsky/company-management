@@ -43,8 +43,8 @@ export const invoiceRouter = createTRPCRouter({
         clientEmail: input.clientEmail,
         status: input.status,
         date: input.date,
-        paymentTerms: parseInt(input.paymentTerms),
-        dueDate: addDays(input.date, parseInt(input.paymentTerms)), // ToDo: Test this
+        paymentTermsDays: parseInt(input.paymentTermsDays),
+        dueDate: addDays(input.date, parseInt(input.paymentTermsDays)), // ToDo: Test this
         description: input.description,
         amount: input.amount,
       },
