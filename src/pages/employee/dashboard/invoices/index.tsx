@@ -43,7 +43,11 @@ const Invoices: NextPage = () => {
                 <CardFooter className="flex flex-row items-center justify-between">
                   {/* ToDo: Format number, add coma */}
                   <p className="font-bold">${nFormatter(invoice.amount, 4)}</p>
-                  <Badge variant={invoice.status ? "paid" : "pending"} className="rounded-sm">
+                  <Badge
+                    // ToDo: This should be straight from invoice.status
+                    variant={invoice.status === "paid" ? "paid" : invoice.status === "pending" ? "pending" : "draft"}
+                    className="rounded-sm"
+                  >
                     <span className="capitalize">{invoice.status}</span>
                   </Badge>
                 </CardFooter>
