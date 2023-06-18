@@ -3,11 +3,15 @@ import {Button} from "./ui/button";
 import {Moon, Sun} from "lucide-react";
 import {useTheme} from "next-themes";
 import {useMounted} from "~/hooks/use-mounted";
+import {useSession} from "next-auth/react";
+import {getNameInitials} from "~/lib/utils";
 
 const Navbar = () => {
   const mounted = useMounted();
 
   const {theme, setTheme} = useTheme();
+
+  const {data: session} = useSession();
 
   return (
     <nav className="flex w-full items-center justify-end space-x-2 p-2">
@@ -20,8 +24,8 @@ const Navbar = () => {
       )}
 
       <Avatar className="h-8 w-8 border sm:h-10 sm:w-10">
-        <AvatarImage src="https://github.com/bvonpotobsky.png" alt="@shadcn" />
-        <AvatarFallback>BVP</AvatarFallback>
+        <AvatarImage src={session?.user.image ?? undefined} alt="@shadcn" />
+        <AvatarFallback>{getNameInitials(session?.user.name ?? "AA")}</AvatarFallback>
       </Avatar>
     </nav>
   );

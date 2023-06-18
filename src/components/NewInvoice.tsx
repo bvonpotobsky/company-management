@@ -38,7 +38,6 @@ const NewInvoiceForm = () => {
   const form = useForm<z.infer<typeof NewInvoiceSchema>>({
     resolver: zodResolver(NewInvoiceSchema),
     defaultValues: {
-      amount: 0,
       description: "",
       clientName: "",
       clientEmail: "",
@@ -68,7 +67,7 @@ const NewInvoiceForm = () => {
   };
 
   return (
-    <Dialog open={isDialogOpen}>
+    <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
       <Button onClick={() => setIsDialogOpen(true)} size="sm">
         <PlusCircle className="mr-2" />
         New invoice
