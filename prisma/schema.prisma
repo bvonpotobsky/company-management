@@ -29,6 +29,7 @@ model Account {
   user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([provider, providerAccountId])
+  @@index([userId])
 }
 
 model Session {
@@ -37,6 +38,8 @@ model Session {
   userId       String
   expires      DateTime
   user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
 }
 
 model User {
@@ -58,6 +61,8 @@ model VerificationToken {
   @@unique([identifier, token])
 }
 
+// End of Next auth
+
 model Invoice {
   id          String   @id @default(cuid())
   amount      Int
@@ -69,4 +74,6 @@ model Invoice {
 
   userId String
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
 }
