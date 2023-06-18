@@ -12,6 +12,9 @@ export const invoiceRouter = createTRPCRouter({
       where: {
         userId: ctx.session.user.id,
       },
+      include: {
+        Items: true,
+      },
     });
 
     return invoices;
@@ -43,10 +46,18 @@ export const invoiceRouter = createTRPCRouter({
         clientEmail: input.clientEmail,
         status: input.status,
         date: input.date,
-        paymentTermsDays: parseInt(input.paymentTermsDays),
-        dueDate: addDays(input.date, parseInt(input.paymentTermsDays)), // ToDo: Test this
+        paymentTermsDays: input.paymentTermsDays,
+        dueDate: addDays(input.date, input.paymentTermsDays),
         description: input.description,
-        amount: input.amount,
+        Items: {
+          createMany: {
+            data: input.items.map((item) => ({
+              name: item.name,
+              price: item.price,
+              quantity: item.quantity,
+            })),
+          },
+        },
       },
     });
 

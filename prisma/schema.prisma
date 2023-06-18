@@ -71,14 +71,13 @@ enum InvoiceStatus {
 
 model Invoice {
   id               String        @id @default(cuid())
-  amount           Int
-  description      String
-  status           InvoiceStatus
   clientName       String
   clientEmail      String
+  description      String
   date             DateTime
   paymentTermsDays Int
   dueDate          DateTime // Due date is calculated from date + paymentTerms
+  status           InvoiceStatus
 
   userId String
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)

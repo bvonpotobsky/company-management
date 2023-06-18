@@ -1,10 +1,10 @@
-import {useState} from "react";
+import {Fragment, useState} from "react";
 
 import * as z from "zod";
 import {cn} from "~/lib/utils";
 import {format} from "date-fns";
 
-import {useForm} from "react-hook-form";
+import {useFieldArray, useForm} from "react-hook-form";
 import {zodResolver} from "@hookform/resolvers/zod";
 
 import {Button} from "./ui/button";
@@ -13,9 +13,9 @@ import {Dialog, DialogContent, DialogTrigger} from "~/components/ui/dialog";
 import {Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage} from "./ui/form";
 import {Popover, PopoverContent, PopoverTrigger} from "./ui/popover";
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "./ui/select";
-
-import {CalendarIcon, PlusCircle, X} from "lucide-react";
 import {Calendar} from "./ui/calendar";
+
+import {CalendarIcon, LucideTrash2, PlusCircle, X} from "lucide-react";
 
 import {api} from "~/utils/api";
 
@@ -23,10 +23,18 @@ export const NewInvoiceSchema = z.object({
   clientName: z.string().min(1),
   clientEmail: z.string().email(),
   description: z.string().min(1),
-  amount: z.coerce.number().positive().int().min(1),
   date: z.date(),
-  paymentTermsDays: z.string().min(1),
+  paymentTermsDays: z.coerce.number().positive().int().min(1),
   status: z.enum(["paid", "pending", "draft"]),
+  items: z
+    .array(
+      z.object({
+        name: z.string().min(1),
+        quantity: z.coerce.number().positive().int().min(1),
+        price: z.coerce.number().positive().int().min(1),
+      })
+    )
+    .min(1),
 });
 
 const NewInvoiceForm = () => {
@@ -42,7 +50,13 @@ const NewInvoiceForm = () => {
       clientName: "",
       clientEmail: "",
       status: "pending",
+      items: [{name: "", quantity: 1, price: 1}],
     },
+  });
+
+  const {fields, append, remove} = useFieldArray({
+    control: form.control,
+    name: "items",
   });
 
   const onSubmit = (data: z.infer<typeof NewInvoiceSchema>) => {
@@ -51,10 +65,10 @@ const NewInvoiceForm = () => {
         clientName: data.clientName,
         clientEmail: data.clientEmail,
         status: data.status,
-        amount: data.amount,
         description: data.description,
         date: data.date,
         paymentTermsDays: data.paymentTermsDays,
+        items: data.items,
       },
       {
         onSuccess: () => {
@@ -73,14 +87,14 @@ const NewInvoiceForm = () => {
         New invoice
       </Button>
 
-      <DialogContent className="h-full">
+      <DialogContent className="h-full w-full overflow-y-auto">
         <Form {...form}>
           <Button onClick={() => setIsDialogOpen(false)} variant="ghost" className="absolute right-4 top-4">
             <X className="h-4 w-4 text-black dark:text-white" />
             <span className="sr-only">Close</span>
           </Button>
 
-          <form onSubmit={(...args) => void form.handleSubmit(onSubmit)(...args)} className="w-2/3 space-y-6">
+          <form onSubmit={(...args) => void form.handleSubmit(onSubmit)(...args)} className="space-y-6">
             <FormField
               control={form.control}
               name="clientName"
@@ -139,7 +153,6 @@ const NewInvoiceForm = () => {
                       />
                     </PopoverContent>
                   </Popover>
-
                   <FormMessage />
                 </FormItem>
               )}
@@ -151,35 +164,27 @@ const NewInvoiceForm = () => {
               render={({field}) => (
                 <FormItem>
                   <FormLabel>Payment Terms</FormLabel>
-                  <Select onValueChange={field.onChange} defaultValue={field.value}>
+                  <Select onValueChange={field.onChange}>
                     <FormControl>
                       <SelectTrigger>
                         <SelectValue placeholder="Select a payment term" />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      <SelectItem value="30">Next 30 days</SelectItem>
-                      <SelectItem value="7">1 week</SelectItem>
-                      <SelectItem value="90">3 months</SelectItem>
+                      <SelectItem value="30" {...form.register("paymentTermsDays", {valueAsNumber: true})}>
+                        Next 30 days
+                      </SelectItem>
+                      <SelectItem value="7" {...form.register("paymentTermsDays", {valueAsNumber: true})}>
+                        1 week
+                      </SelectItem>
+                      <SelectItem value="90" {...form.register("paymentTermsDays", {valueAsNumber: true})}>
+                        3 months
+                      </SelectItem>
                     </SelectContent>
                   </Select>
                   <FormDescription>
                     The payment terms specify the number of days that are available to the client to pay the invoice.
                   </FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="amount"
-              render={({field}) => (
-                <FormItem>
-                  <FormLabel>Amount</FormLabel>
-                  <FormControl>
-                    <Input type="number" placeholder="1000" {...field} />
-                  </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
@@ -200,6 +205,82 @@ const NewInvoiceForm = () => {
               )}
             />
 
+            <FormField
+              control={form.control}
+              name="status"
+              render={({field}) => (
+                <FormItem>
+                  <FormLabel>Status</FormLabel>
+                  <Select onValueChange={field.onChange} defaultValue={field.value}>
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select a status" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      <SelectItem value="paid">Paid</SelectItem>
+                      <SelectItem value="pending">Pending</SelectItem>
+                      <SelectItem value="draft">Draft</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormItem className="w-full">
+              <FormLabel className="text-xl">Items List</FormLabel>
+              <FormControl>
+                <section className="grid-cols-[repeat(3, 1fr)_100px] grid items-center gap-x-2 space-y-2">
+                  <FormLabel className="col-start-1 col-end-2">Name</FormLabel>
+                  <FormLabel className="col-start-2 col-end-3">Qty</FormLabel>
+                  <FormLabel className="col-start-3 col-end-4">Price</FormLabel>
+
+                  {fields.map((item, index) => (
+                    <Fragment key={item.id}>
+                      <Input
+                        className="col-start-1 col-end-2"
+                        type="text"
+                        placeholder="Layout Design"
+                        {...form.register(`items.${index}.name`)}
+                      />
+                      <Input
+                        className="col-start-2 col-end-3"
+                        type="number"
+                        placeholder="3"
+                        {...form.register(`items.${index}.quantity`, {valueAsNumber: true})}
+                      />
+
+                      <Input
+                        className="col-start-3 col-end-4"
+                        type="number"
+                        placeholder="50"
+                        {...form.register(`items.${index}.price`, {valueAsNumber: true})}
+                      />
+
+                      <Button
+                        disabled={index === 0 ? true : false}
+                        variant="ghost"
+                        onClick={() => remove(index)}
+                        className="col-start-4 col-end-5"
+                      >
+                        <LucideTrash2 />
+                      </Button>
+                    </Fragment>
+                  ))}
+                  <Button
+                    className="col-start-1 col-end-5"
+                    type="button"
+                    variant="secondary"
+                    onClick={() => append({name: "", quantity: 0, price: 0})}
+                  >
+                    Add new item
+                  </Button>
+                </section>
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+
             <div className="space-x-1">
               <DialogTrigger asChild>
                 <Button
@@ -214,8 +295,8 @@ const NewInvoiceForm = () => {
                 </Button>
               </DialogTrigger>
 
-              <Button disabled={isAddingInvoice} size="sm" asChild>
-                <input type="submit" value={!isAddingInvoice ? "Add" : "Adding..."} />
+              <Button disabled={isAddingInvoice} size="sm" asChild className="cursor-pointer">
+                <input type="submit" value={!isAddingInvoice ? "Save invoice" : "Adding..."} />
               </Button>
             </div>
           </form>
