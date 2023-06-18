@@ -65,16 +65,13 @@ const NewInvoiceForm = () => {
     <Dialog open={isDialogOpen}>
       <Button onClick={() => setIsDialogOpen(true)} size="sm">
         <PlusCircle className="mr-2" />
-        New
+        New invoice
       </Button>
 
       <DialogContent className="h-full">
         <Form {...form}>
-          <Button
-            onClick={() => setIsDialogOpen(false)}
-            className="absolute right-4 top-4 bg-transparent hover:bg-transparent"
-          >
-            <X className="h-4 w-4" color="black" />
+          <Button onClick={() => setIsDialogOpen(false)} variant="ghost" className="absolute right-4 top-4">
+            <X className="h-4 w-4 text-black dark:text-white" />
             <span className="sr-only">Close</span>
           </Button>
 
