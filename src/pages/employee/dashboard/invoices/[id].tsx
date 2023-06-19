@@ -14,6 +14,8 @@ import LayoutEmployee from "~/components/Layout.employee";
 
 import {api} from "~/utils/api";
 import {generateSSGHelper} from "~/server/helpers/ssgHelper";
+import {PDFDownloadLink, PDFViewer} from "@react-pdf/renderer";
+import {MyDocument} from "~/components/PDF";
 
 export const getServerSideProps = async (context: GetServerSidePropsContext) => {
   const ssg = generateSSGHelper();
@@ -64,11 +66,11 @@ const ProjectIdPage: NextPage<ServerSideProps> = ({id}) => {
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between">
-            <CardTitle>
+            <CardTitle>{invoice.description}</CardTitle>
+            <CardDescription>
               <span className="text-gray-700">#</span>
               {truncate(invoice.id, 7)}
-            </CardTitle>
-            <CardDescription>{invoice.description}</CardDescription>
+            </CardDescription>
           </CardHeader>
 
           <CardContent className="flex justify-between">
@@ -114,6 +116,14 @@ const ProjectIdPage: NextPage<ServerSideProps> = ({id}) => {
           </CardFooter>
         </Card>
       </section>
+
+      <PDFDownloadLink document={<MyDocument invoice={invoice} />} fileName="somename.pdf">
+        {({blob, url, loading, error}) => (loading ? "Loading document..." : "Download now!")}
+      </PDFDownloadLink>
+
+      {/* <PDFViewer>
+        <MyDocument />
+      </PDFViewer> */}
     </LayoutEmployee>
   );
 };
