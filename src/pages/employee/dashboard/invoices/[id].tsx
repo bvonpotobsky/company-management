@@ -5,17 +5,20 @@ import {format} from "date-fns";
 import {formatNumber, getTotalInvoiceAmount, truncate} from "~/lib/utils";
 
 import {Button} from "~/components/ui/button";
-import {ChevronLeft} from "lucide-react";
+import {ChevronLeft, Download} from "lucide-react";
 
 import {Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle} from "~/components/ui/card";
 import {Badge} from "~/components/ui/badge";
+import {Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger} from "~/components/ui/dialog";
 
-import LayoutEmployee from "~/components/Layout.employee";
+import LayoutEmployee from "~/components/layout.employee";
 
 import {api} from "~/utils/api";
 import {generateSSGHelper} from "~/server/helpers/ssgHelper";
+
 import {PDFDownloadLink, PDFViewer} from "@react-pdf/renderer";
-import {MyDocument} from "~/components/PDF";
+import InvoicePDF from "~/components/pdf/invoice-pdf";
+import ViewPDFDialog from "~/components/pdf/view-in-pdf";
 
 export const getServerSideProps = async (context: GetServerSidePropsContext) => {
   const ssg = generateSSGHelper();
@@ -47,22 +50,30 @@ const ProjectIdPage: NextPage<ServerSideProps> = ({id}) => {
   return (
     <LayoutEmployee>
       <section className="w-full p-2">
-        <Button asChild variant="link">
-          <Link href="/employee/dashboard/invoices" className="flex items-center font-bold">
-            <ChevronLeft className="mr-2" size={20} /> Go back
-          </Link>
-        </Button>
+        <div className="flex w-full items-center justify-between">
+          <Button asChild variant="link">
+            <Link href="/employee/dashboard/invoices" className="flex items-center font-bold">
+              <ChevronLeft className="mr-2" size={20} /> Go back
+            </Link>
+          </Button>
 
-        <div className="my-4 flex w-full items-center justify-between rounded-lg border p-4 py-6">
-          <p>Status</p>
+          <ViewPDFDialog>
+            <PDFViewer width="100%" height="100%" showToolbar={false}>
+              <InvoicePDF invoice={invoice} />
+            </PDFViewer>
+          </ViewPDFDialog>
+        </div>
+
+        <Card className="my-4 flex w-full items-center justify-between p-4">
+          <CardTitle>Status</CardTitle>
           <Badge
             // ToDo: This should be straight from invoice.status
             variant={invoice.status === "paid" ? "paid" : invoice.status === "pending" ? "pending" : "draft"}
-            className="rounded-sm text-sm"
+            className="rounded-sm text-lg"
           >
             <span className="capitalize">{invoice.status}</span>
           </Badge>
-        </div>
+        </Card>
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between">
@@ -114,16 +125,33 @@ const ProjectIdPage: NextPage<ServerSideProps> = ({id}) => {
               </CardDescription>
             </CardContent>
           </CardFooter>
+
+          <CardFooter className="flex flex-row items-center justify-start space-x-2">
+            <Button size="sm" variant="default">
+              Email invoice
+            </Button>
+
+            <Button asChild variant="outline" size="sm">
+              <PDFDownloadLink
+                document={<InvoicePDF invoice={invoice} />}
+                fileName={`${invoice.clientName}_Invoice.pdf`}
+                className="flex items-center"
+              >
+                {({blob, url, loading, error}) =>
+                  loading ? (
+                    "Loading document..."
+                  ) : (
+                    <>
+                      <Download className="mr-2" />
+                      Download
+                    </>
+                  )
+                }
+              </PDFDownloadLink>
+            </Button>
+          </CardFooter>
         </Card>
       </section>
-
-      <PDFDownloadLink document={<MyDocument invoice={invoice} />} fileName="somename.pdf">
-        {({blob, url, loading, error}) => (loading ? "Loading document..." : "Download now!")}
-      </PDFDownloadLink>
-
-      {/* <PDFViewer>
-        <MyDocument />
-      </PDFViewer> */}
     </LayoutEmployee>
   );
 };

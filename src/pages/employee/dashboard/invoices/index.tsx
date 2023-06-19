@@ -8,8 +8,8 @@ import {getTotalInvoiceAmount, nFormatter} from "~/lib/utils";
 import {Badge} from "~/components/ui/badge";
 import {Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle} from "~/components/ui/card";
 
-import LayoutEmployee from "~/components/Layout.employee";
-import NewInvoiceForm from "~/components/NewInvoice";
+import LayoutEmployee from "~/components/layout.employee";
+import NewInvoiceForm from "~/components/new-invoice-form";
 
 import LoadingInvoices from "~/components/loading/loading.invoices";
 

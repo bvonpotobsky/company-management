@@ -4,7 +4,7 @@ import {TRPCError} from "@trpc/server";
 import {z} from "zod";
 import {addDays} from "date-fns";
 
-import {NewInvoiceSchema} from "~/components/NewInvoice";
+import {NewInvoiceSchema} from "~/components/new-invoice-form";
 
 export const invoiceRouter = createTRPCRouter({
   getAllCurrentUser: protectedProcedure.query(async ({ctx}) => {

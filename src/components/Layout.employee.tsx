@@ -1,4 +1,4 @@
-import Navbar from "./Navbar";
+import Navbar from "./navbar";
 
 const LayoutEmployee = ({children}: {children: React.ReactNode}) => {
   return (
