@@ -1,9 +1,10 @@
-import type {Invoice, Item} from "@prisma/client";
-
 import React from "react";
 import {Page, Text, View, Document, StyleSheet, Font} from "@react-pdf/renderer";
-import {getTotalInvoiceAmount} from "~/lib/utils";
+
 import {format} from "date-fns";
+import {getTotalInvoiceAmount} from "~/lib/utils";
+
+import type {Invoice, Item} from "@prisma/client";
 
 Font.register({
   family: "Oswald",

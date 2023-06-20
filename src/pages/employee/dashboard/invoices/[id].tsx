@@ -45,6 +45,16 @@ const ProjectIdPage: NextPage<ServerSideProps> = ({id}) => {
 
   // if (!invoice) return <div>Invoice not found</div>; // ToDo: 404 page
 
+  const {mutate} = api.email.sendInvoice.useMutation();
+
+  const sendEmail = () => {
+    mutate(undefined, {
+      onSuccess: () => {
+        console.log("Email sent successfully");
+      },
+    });
+  };
+
   return (
     <LayoutEmployee>
       <section className="w-full p-2">
@@ -119,9 +129,7 @@ const ProjectIdPage: NextPage<ServerSideProps> = ({id}) => {
                           {item.quantity} x ${formatNumber(item.price)}
                         </span>
                       </CardDescription>
-                      <CardDescription className="flex flex-col font-bold">
-                        ${formatNumber(item.quantity * item.price)}
-                      </CardDescription>
+                      <CardDescription className="flex flex-col font-bold"></CardDescription>
                     </div>
                   ))}
 
@@ -133,7 +141,7 @@ const ProjectIdPage: NextPage<ServerSideProps> = ({id}) => {
               </CardFooter>
 
               <CardFooter className="flex flex-row items-center justify-start space-x-2">
-                <Button size="sm" variant="default">
+                <Button size="sm" variant="default" onClick={() => sendEmail()}>
                   Email invoice
                 </Button>
 
