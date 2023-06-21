@@ -1,8 +1,6 @@
 import {type ClassValue, clsx} from "clsx";
 import {twMerge} from "tailwind-merge";
 
-import type {Item} from "@prisma/client";
-
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
@@ -28,10 +26,12 @@ export function nFormatter(num: number, digits?: number) {
   return item ? (num / item.value).toFixed(digits || 1).replace(rx, "$1") + item.symbol : "0";
 }
 
-export const formatNumber = (num: number) => {
+export const formatAsPrice = (num: number) => {
   return num.toLocaleString("en-US", {
     minimumFractionDigits: 2,
     maximumFractionDigits: 2,
+    style: "currency",
+    currency: "USD",
   });
 };
 
@@ -53,6 +53,7 @@ export const getNameInitials = (fullName: string) => {
   return initials;
 };
 
-export const getTotalInvoiceAmount = (items: Item[]): number => {
+// ToDo: Add types
+export const getTotalInvoiceAmount = (items): number => {
   return items.reduce((acc, item) => acc + item.price * item.quantity, 0);
 };

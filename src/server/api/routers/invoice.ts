@@ -2,31 +2,54 @@ import {createTRPCRouter, protectedProcedure} from "~/server/api/trpc";
 import {TRPCError} from "@trpc/server";
 
 import {z} from "zod";
-import {addDays} from "date-fns";
-
-import {NewInvoiceSchema} from "~/components/new-invoice-form";
+import {addDays, format} from "date-fns";
+import {formatAsPrice, getTotalInvoiceAmount} from "~/lib/utils";
 
 export const invoiceRouter = createTRPCRouter({
   getAllCurrentUser: protectedProcedure.query(async ({ctx}) => {
-    const invoices = await ctx.prisma.invoice.findMany({
+    const invoices = await ctx.prisma.invoices.findMany({
       where: {
-        userId: ctx.session.user.id,
-      },
-      include: {
-        Items: true,
+        profileId: ctx.session.user.id,
       },
     });
 
     return invoices;
   }),
 
+  // Formatted to show in the dashboard as data table
+  getAllInvoices: protectedProcedure.query(async ({ctx}) => {
+    const invoices = await ctx.prisma.invoices.findMany({
+      include: {
+        profile: true,
+      },
+    });
+
+    const formattedInvoices = invoices.map((invoice) => ({
+      id: invoice.id,
+      date: format(invoice.createdAt, "PP"), // 01/01/2020
+      paymentDue: format(invoice.dueDate, "PP"),
+      name: `${invoice.profile.firstName} ${invoice.profile.lastName}`,
+      amount: invoice.amount,
+      status: invoice.status,
+    }));
+
+    return [
+      ...formattedInvoices,
+      ...formattedInvoices,
+      ...formattedInvoices,
+      ...formattedInvoices,
+      ...formattedInvoices,
+      ...formattedInvoices,
+    ];
+  }),
+
   getInvoiceById: protectedProcedure.input(z.object({id: z.string()})).query(async ({ctx, input}) => {
-    const invoice = await ctx.prisma.invoice.findUnique({
+    const invoice = await ctx.prisma.invoices.findUnique({
       where: {
         id: input.id,
       },
       include: {
-        Items: true,
+        profile: true,
       },
     });
 
@@ -37,32 +60,6 @@ export const invoiceRouter = createTRPCRouter({
         cause: `The invoice with id ${input.id} does not exist in our register.`,
       });
     }
-
-    return invoice;
-  }),
-
-  addNewInvoice: protectedProcedure.input(NewInvoiceSchema).mutation(({ctx, input}) => {
-    const invoice = ctx.prisma.invoice.create({
-      data: {
-        userId: ctx.session.user.id,
-        clientName: input.clientName,
-        clientEmail: input.clientEmail,
-        status: input.status,
-        date: input.date,
-        paymentTermsDays: input.paymentTermsDays,
-        dueDate: addDays(input.date, input.paymentTermsDays),
-        description: input.description,
-        Items: {
-          createMany: {
-            data: input.items.map((item) => ({
-              name: item.name,
-              price: item.price,
-              quantity: item.quantity,
-            })),
-          },
-        },
-      },
-    });
 
     return invoice;
   }),

@@ -1,8 +1,8 @@
 import * as React from "react";
 
 import {format} from "date-fns";
-import type {Invoice, Item} from "@prisma/client";
-import {formatNumber, getTotalInvoiceAmount} from "../lib/utils";
+
+import {formatAsPrice, getTotalInvoiceAmount} from "../lib/utils";
 
 import {
   Body,
@@ -22,10 +22,6 @@ import {
 } from "@react-email/components";
 
 const baseUrl = process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "http://localhost:3000";
-
-type InvoiceEmailPdf = Invoice & {
-  Items: Item[];
-};
 
 // export const AppleReceiptEmail = ({invoice}: {invoice: InvoiceEmailPdf}) => {
 export const InvoiceEmail = () => {
@@ -181,7 +177,7 @@ export const InvoiceEmail = () => {
                     x
                   </Text>
                   <Text className=" pr-[22px]" style={productPrice}>
-                    ${formatNumber(item.price)}
+                    ${formatAsPrice(item.price)}
                   </Text>
                 </Column>
               </Section>
@@ -195,7 +191,7 @@ export const InvoiceEmail = () => {
               </Column>
               <Column style={productPriceVerticalLine}></Column>
               <Column style={productPriceLargeWrapper}>
-                <Text style={productPriceLarge}>${formatNumber(getTotalInvoiceAmount(invoice.Items))}</Text>
+                <Text style={productPriceLarge}>${formatAsPrice(getTotalInvoiceAmount(invoice.Items))}</Text>
               </Column>
             </Section>
             <Hr style={productPriceLineBottom} />

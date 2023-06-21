@@ -2,7 +2,7 @@ import type {GetServerSidePropsContext, InferGetServerSidePropsType, NextPage} f
 import Link from "next/link";
 
 import {format} from "date-fns";
-import {formatNumber, getTotalInvoiceAmount, truncate} from "~/lib/utils";
+import {formatAsPrice, getTotalInvoiceAmount, truncate} from "~/lib/utils";
 
 import {Button} from "~/components/ui/button";
 import {ChevronLeft, Download} from "lucide-react";
@@ -74,102 +74,104 @@ const ProjectIdPage: NextPage<ServerSideProps> = ({id}) => {
         </div>
 
         {/* Streaming or suspense */}
-        {isLoading && <LoadingInvoices />}
-
-        {invoice && (
-          <>
-            <Card className="my-4 flex w-full items-center justify-between p-4">
-              <CardTitle>Status</CardTitle>
-              <Badge
-                // ToDo: This should be straight from invoice.status
-                variant={invoice.status === "paid" ? "paid" : invoice.status === "pending" ? "pending" : "draft"}
-                className="rounded-sm text-lg"
-              >
-                <span className="capitalize">{invoice.status}</span>
-              </Badge>
-            </Card>
-
-            <Card>
-              <CardHeader className="flex flex-row items-center justify-between">
-                <CardTitle>{invoice.description}</CardTitle>
-                <CardDescription>
-                  <span className="text-gray-700">#</span>
-                  {truncate(invoice.id, 7)}
-                </CardDescription>
-              </CardHeader>
-
-              <CardContent className="flex justify-between">
-                <CardDescription className="flex flex-col">
-                  <span>Invoice Date</span>{" "}
-                  <span className="font-semibold text-white">{format(invoice.date, "PPP")}</span>
-                </CardDescription>
-                <CardDescription className="flex flex-col text-right">
-                  <span>Bill To</span> <span className="font-semibold text-white">{invoice.clientName}</span>
-                </CardDescription>
-              </CardContent>
-
-              <CardContent className="flex justify-between">
-                <CardDescription className="flex flex-col">
-                  <span>Payment Due</span>{" "}
-                  <span className="font-semibold text-white">{format(invoice.dueDate, "PPP")}</span>
-                </CardDescription>
-                <CardDescription className="flex flex-col text-right">
-                  <span>Sent To</span> <span className="font-semibold dark:text-white">{invoice.clientEmail}</span>
-                </CardDescription>
-              </CardContent>
-
-              <CardFooter className="flex flex-row items-center justify-between">
-                <CardContent className="flex w-full flex-col justify-center overflow-hidden rounded-lg border bg-slate-100 p-0 dark:bg-slate-900">
-                  {invoice?.Items.map((item) => (
-                    <div className="flex h-full flex-row items-center justify-between p-4" key={item.id}>
-                      <CardDescription className="flex flex-col space-y-2">
-                        <span className="font-semibold capitalize text-black dark:text-white">{item.name}</span>
-                        <span className="font-semibold">
-                          {item.quantity} x ${formatNumber(item.price)}
-                        </span>
-                      </CardDescription>
-                      <CardDescription className="flex flex-col font-bold"></CardDescription>
-                    </div>
-                  ))}
-
-                  <CardDescription className="flex w-full flex-row items-center justify-between overflow-hidden bg-slate-600 p-4 py-6 text-white dark:bg-black">
-                    <span className="font-semibold">Amount Due</span>
-                    <span className="text-xl font-semibold">${formatNumber(getTotalInvoiceAmount(invoice.Items))}</span>
-                  </CardDescription>
-                </CardContent>
-              </CardFooter>
-
-              <CardFooter className="flex flex-row items-center justify-start space-x-2">
-                <Button size="sm" variant="default" onClick={() => sendEmail()}>
-                  Email invoice
-                </Button>
-
-                <Button asChild variant="outline" size="sm">
-                  <PDFDownloadLink
-                    document={<InvoicePDF invoice={invoice} />}
-                    fileName={`${invoice.clientName}_Invoice.pdf`}
-                    className="flex items-center"
-                  >
-                    {/* ToDo: handle error state/message */}
-                    {({blob, url, loading, error}) =>
-                      loading ? (
-                        "Loading document..."
-                      ) : (
-                        <>
-                          <Download className="mr-2" />
-                          Download
-                        </>
-                      )
-                    }
-                  </PDFDownloadLink>
-                </Button>
-              </CardFooter>
-            </Card>
-          </>
-        )}
+        {/* {isLoading && <LoadingInvoices />} */}
       </section>
     </LayoutEmployee>
   );
 };
 
 export default ProjectIdPage;
+
+// {invoice && (
+//   <>
+//     <Card className="my-4 flex w-full items-center justify-between p-4">
+//       <CardTitle>Status</CardTitle>
+//       <Badge
+//         // ToDo: This should be straight from invoice.status
+//         variant={invoice.status === "paid" ? "paid" : invoice.status === "pending" ? "pending" : "draft"}
+//         className="rounded-sm text-lg"
+//       >
+//         <span className="capitalize">{invoice.status}</span>
+//       </Badge>
+//     </Card>
+
+//     <Card>
+//       <CardHeader className="flex flex-row items-center justify-between">
+//         <CardTitle>{invoice.description}</CardTitle>
+//         <CardDescription>
+//           <span className="text-gray-700">#</span>
+//           {truncate(invoice.id, 7)}
+//         </CardDescription>
+//       </CardHeader>
+
+//       <CardContent className="flex justify-between">
+//         <CardDescription className="flex flex-col">
+//           <span>Invoice Date</span>{" "}
+//           <span className="font-semibold text-white">{format(invoice.date, "PPP")}</span>
+//         </CardDescription>
+//         <CardDescription className="flex flex-col text-right">
+//           <span>Bill To</span> <span className="font-semibold text-white">{invoice.clientName}</span>
+//         </CardDescription>
+//       </CardContent>
+
+//       <CardContent className="flex justify-between">
+//         <CardDescription className="flex flex-col">
+//           <span>Payment Due</span>{" "}
+//           <span className="font-semibold text-white">{format(invoice.dueDate, "PPP")}</span>
+//         </CardDescription>
+//         <CardDescription className="flex flex-col text-right">
+//           <span>Sent To</span> <span className="font-semibold dark:text-white">{invoice.clientEmail}</span>
+//         </CardDescription>
+//       </CardContent>
+
+//       <CardFooter className="flex flex-row items-center justify-between">
+//         <CardContent className="flex w-full flex-col justify-center overflow-hidden rounded-lg border bg-slate-100 p-0 dark:bg-slate-900">
+//           {invoice?.Items.map((item) => (
+//             <div className="flex h-full flex-row items-center justify-between p-4" key={item.id}>
+//               <CardDescription className="flex flex-col space-y-2">
+//                 <span className="font-semibold capitalize text-black dark:text-white">{item.name}</span>
+//                 <span className="font-semibold">
+//                   {item.quantity} x ${formatAsPrice(item.price)}
+//                 </span>
+//               </CardDescription>
+//               <CardDescription className="flex flex-col font-bold"></CardDescription>
+//             </div>
+//           ))}
+
+//           <CardDescription className="flex w-full flex-row items-center justify-between overflow-hidden bg-slate-600 p-4 py-6 text-white dark:bg-black">
+//             <span className="font-semibold">Amount Due</span>
+//             <span className="text-xl font-semibold">
+//               ${formatAsPrice(getTotalInvoiceAmount(invoice.Items))}
+//             </span>
+//           </CardDescription>
+//         </CardContent>
+//       </CardFooter>
+
+//       <CardFooter className="flex flex-row items-center justify-start space-x-2">
+//         <Button size="sm" variant="default" onClick={() => sendEmail()}>
+//           Email invoice
+//         </Button>
+
+//         <Button asChild variant="outline" size="sm">
+//           <PDFDownloadLink
+//             document={<InvoicePDF invoice={invoice} />}
+//             fileName={`${invoice.clientName}_Invoice.pdf`}
+//             className="flex items-center"
+//           >
+//             {/* ToDo: handle error state/message */}
+//             {({blob, url, loading, error}) =>
+//               loading ? (
+//                 "Loading document..."
+//               ) : (
+//                 <>
+//                   <Download className="mr-2" />
+//                   Download
+//                 </>
+//               )
+//             }
+//           </PDFDownloadLink>
+//         </Button>
+//       </CardFooter>
+//     </Card>
+//   </>
+// )}

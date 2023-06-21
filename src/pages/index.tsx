@@ -37,7 +37,7 @@ const Home: NextPage = () => {
                   className="h-8 w-8 border border-gray-700 dark:border dark:border-gray-500 sm:h-10 sm:w-10"
                   asChild
                 >
-                  <Link href="employee/dashboard/invoices">
+                  <Link href="admin/dashboard">
                     <AvatarImage
                       src={session?.user.image ?? undefined}
                       alt={`Profile picture of ${session?.user.name ?? "user logged"}`}

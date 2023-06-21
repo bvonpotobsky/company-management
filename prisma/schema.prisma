@@ -1,6 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider        = "prisma-client-js"
   previewFeatures = ["jsonProtocol"]
@@ -42,17 +39,6 @@ model Session {
   @@index([userId])
 }
 
-model User {
-  id            String    @id @default(cuid())
-  name          String?
-  email         String?   @unique
-  emailVerified DateTime?
-  image         String?
-  accounts      Account[]
-  sessions      Session[]
-  Invoice       Invoice[]
-}
-
 model VerificationToken {
   identifier String
   token      String   @unique
@@ -61,39 +47,166 @@ model VerificationToken {
   @@unique([identifier, token])
 }
 
-// End of Next auth
+model User {
+  id            String    @id @default(cuid())
+  name          String?
+  email         String?   @unique
+  emailVerified DateTime?
+  image         String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  accounts      Account[]
+  sessions      Session[]
 
-enum InvoiceStatus {
-  paid
-  pending
-  draft
+  Profile Profile?
 }
 
-model Invoice {
-  id               String        @id @default(cuid())
-  clientName       String
-  clientEmail      String
-  description      String
-  date             DateTime
-  paymentTermsDays Int
-  dueDate          DateTime // Due date is calculated from date + paymentTerms
-  status           InvoiceStatus
+enum ProfileRole {
+  ADMIN
+  MANAGER
+  SUPERVISOR
+  EMPLOYEE
+}
 
-  userId String
+// Business models
+model Profile {
+  id         String      @id @default(cuid())
+  firstName  String
+  lastName   String
+  phone      String
+  createdAt  DateTime    @default(now())
+  updatedAt  DateTime    @updatedAt
+  dob        DateTime
+  role       ProfileRole
+  isVerified Boolean     @default(false)
+
+  address Address[]
+
+  projectMember ProjectMember[]
+  bankAccount   BankAccount[]
+
+  shift    Shift[]
+  invoices Invoices[]
+
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-  Items  Item[]
+  userId String @unique
 
   @@index([userId])
 }
 
-model Item {
-  id          String   @id @default(cuid())
-  name        String
-  quantity    Int
-  price       Int
-  description String? // Should this be a relation to a product?
-  Invoice     Invoice? @relation(fields: [invoiceId], references: [id])
-  invoiceId   String?
+model Project {
+  id        String   @id @default(cuid())
+  name      String
+  // clientId String? // TODO: Make this a relation to a client model
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-  @@index([invoiceId])
+  members ProjectMember[]
+  address Address[]
+  shift   Shift[]
 }
+
+enum ProjectRole {
+  MANAGER
+  ADMIN
+  SUPERVISOR
+}
+
+model ProjectMember {
+  id   String      @id @default(cuid())
+  role ProjectRole
+
+  profile   Profile @relation(fields: [profileId], references: [userId])
+  profileId String
+
+  project   Project @relation(fields: [projectId], references: [id])
+  projectId String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([profileId])
+  @@index([projectId])
+}
+
+model Shift {
+  id        String   @id @default(cuid())
+  start     DateTime
+  end       DateTime
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  profile   Profile @relation(fields: [profileId], references: [userId])
+  profileId String
+
+  project   Project @relation(fields: [projectId], references: [id])
+  projectId String
+
+  @@index([profileId])
+  @@index([projectId])
+}
+
+enum InvoiceStatus {
+  PAID
+  UNPAID
+  OVERDUE
+  DRAFT
+}
+
+model Invoices {
+  id        String        @id @default(cuid())
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+  dueDate   DateTime
+  paidDate  DateTime?
+  amount    Float
+  status    InvoiceStatus
+
+  profile   Profile @relation(fields: [profileId], references: [userId])
+  profileId String
+
+  @@index([profileId])
+}
+
+model BankAccount {
+  id        String   @id @default(cuid())
+  bankName  String
+  bsb       String
+  account   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  profile   Profile @relation(fields: [profileId], references: [userId])
+  profileId String  @unique
+
+  @@index([profileId])
+}
+
+model Address {
+  id        String   @id @default(cuid())
+  address   String
+  city      String
+  state     String
+  zip       String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  profile   Profile? @relation(fields: [profileId], references: [userId])
+  profileId String?
+
+  project   Project? @relation(fields: [projectId], references: [id])
+  projectId String?
+
+  @@index([profileId])
+  @@index([projectId])
+}
+
+// model Logs {
+//   id        String    @id @default(cuid())
+//   createdAt DateTime  @default(now())
+//   updatedAt DateTime  @updatedAt
+//   deletedAt DateTime?
+//   message   String
+//   level     String
+//   meta      Json?
+// }

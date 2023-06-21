@@ -20,21 +20,10 @@ import {CalendarIcon, LucideTrash2, PlusCircle, X} from "lucide-react";
 import {api} from "~/utils/api";
 
 export const NewInvoiceSchema = z.object({
-  clientName: z.string().min(1),
-  clientEmail: z.string().email(),
-  description: z.string().min(1),
-  date: z.date(),
-  paymentTermsDays: z.coerce.number().positive().int().min(1),
-  status: z.enum(["paid", "pending", "draft"]),
-  items: z
-    .array(
-      z.object({
-        name: z.string().min(1),
-        quantity: z.coerce.number().positive().int().min(1),
-        price: z.coerce.number().positive().int().min(1),
-      })
-    )
-    .min(1),
+  dueDate: z.date(),
+  paidDate: z.date().optional(),
+  amount: z.number().positive(),
+  status: z.enum(["PAID", "UNPAID", "OVERDUE", "DRAFT"]),
 });
 
 const NewInvoiceForm = () => {
@@ -45,13 +34,7 @@ const NewInvoiceForm = () => {
 
   const form = useForm<z.infer<typeof NewInvoiceSchema>>({
     resolver: zodResolver(NewInvoiceSchema),
-    defaultValues: {
-      description: "",
-      clientName: "",
-      clientEmail: "",
-      status: "pending",
-      items: [{name: "", quantity: 1, price: 1}],
-    },
+    defaultValues: {},
   });
 
   const {fields, append, remove} = useFieldArray({
@@ -62,13 +45,7 @@ const NewInvoiceForm = () => {
   const onSubmit = (data: z.infer<typeof NewInvoiceSchema>) => {
     mutate(
       {
-        clientName: data.clientName,
-        clientEmail: data.clientEmail,
-        status: data.status,
-        description: data.description,
-        date: data.date,
-        paymentTermsDays: data.paymentTermsDays,
-        items: data.items,
+        data,
       },
       {
         onSuccess: () => {
