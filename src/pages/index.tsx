@@ -47,7 +47,11 @@ const Home: NextPage = () => {
                 </Avatar>
               )}
 
-              <Button variant="default" size={"sm"} onClick={session ? () => void signOut() : () => void signIn()}>
+              <Button
+                variant="default"
+                size={"sm"}
+                onClick={session ? () => void signOut() : () => void signIn("google")}
+              >
                 {session ? "Sign out" : "Sign in"}
               </Button>
             </div>

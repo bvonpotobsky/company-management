@@ -184,10 +184,11 @@ model BankAccount {
 
 model Address {
   id        String   @id @default(cuid())
-  address   String
+  street    String
   city      String
   state     String
-  zip       String
+  zip       Int
+  country   String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 

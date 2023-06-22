@@ -9,3 +9,8 @@ export const ROUTES = [
   {href: "/admin/dashboard/employees", label: "Employees", icon: <Group />},
   {href: "/admin/dashboard/clients", label: "Clients", icon: <PersonStanding />},
 ];
+
+export const COUNTRIES = [
+  {id: "AU", name: "Australia"},
+  {id: "NZ", name: "New Zealand"},
+];

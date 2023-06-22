@@ -41,9 +41,8 @@ const AdminLayout = ({children}: {children: ReactNode}) => {
             </div>
           </div>
         </div>
-        <SettingsLayout>
-          <NewProfileForm />
-        </SettingsLayout>
+
+        <NewProfileForm />
       </main>
     );
   }

@@ -31,6 +31,15 @@ export const profileRouter = createTRPCRouter({
             phone: input.phone,
             dob: input.dob,
             role: "EMPLOYEE",
+            address: {
+              create: {
+                street: input.street,
+                city: input.city,
+                state: input.state,
+                zip: input.zip,
+                country: input.country,
+              },
+            },
           },
         },
       },

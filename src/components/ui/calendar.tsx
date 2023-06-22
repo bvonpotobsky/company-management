@@ -13,6 +13,7 @@ function Calendar({className, classNames, showOutsideDays = true, ...props}: Cal
       showOutsideDays={showOutsideDays}
       className={cn("p-3", className)}
       classNames={{
+        dropdown_year: "w-full",
         months: "flex flex-col sm:flex-row space-y-4 sm:space-x-4 sm:space-y-0",
         month: "space-y-4",
         caption: "flex justify-center pt-1 relative items-center",

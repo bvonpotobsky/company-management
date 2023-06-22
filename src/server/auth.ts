@@ -41,6 +41,11 @@ export const authOptions: NextAuthOptions = {
       },
     }),
   },
+  events: {
+    createUser: (message) => {
+      console.log("createUser", message);
+    },
+  },
   adapter: PrismaAdapter(prisma),
   providers: [
     GoogleProvider({
