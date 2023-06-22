@@ -1,9 +1,9 @@
 import {createTRPCRouter, protectedProcedure} from "~/server/api/trpc";
 import {TRPCError} from "@trpc/server";
 
+import {format} from "date-fns";
+
 import {z} from "zod";
-import {addDays, format} from "date-fns";
-import {formatAsPrice, getTotalInvoiceAmount} from "~/lib/utils";
 
 export const invoiceRouter = createTRPCRouter({
   getAllCurrentUser: protectedProcedure.query(async ({ctx}) => {

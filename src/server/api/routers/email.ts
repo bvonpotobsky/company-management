@@ -7,7 +7,7 @@ import InvoiceEmail from "~/emails-templates/invoice-email";
 const resend = new Resend(env.RESEND_API_KEY);
 
 export const emailRouter = createTRPCRouter({
-  sendInvoice: protectedProcedure.mutation(async ({ctx, input}) => {
+  sendInvoice: protectedProcedure.mutation(async () => {
     const data = await resend.emails.send({
       from: "onboarding@resend.dev",
       to: "bvonpotobsky@gmail.com",

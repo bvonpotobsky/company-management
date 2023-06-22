@@ -1,8 +1,8 @@
 import {Avatar, AvatarFallback, AvatarImage} from "~/components/ui/avatar";
 
-export function RecentSales() {
+const RecentSales = () => {
   return (
-    <div className="space-y-8">
+    <section className="w-full space-y-8">
       <div className="flex items-center">
         <Avatar className="h-9 w-9">
           <AvatarImage src="/avatars/01.png" alt="Avatar" />
@@ -58,6 +58,8 @@ export function RecentSales() {
         </div>
         <div className="ml-auto font-medium">+$39.00</div>
       </div>
-    </div>
+    </section>
   );
-}
+};
+
+export default RecentSales;

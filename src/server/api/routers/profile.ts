@@ -1,8 +1,6 @@
 import {createTRPCRouter, protectedProcedure} from "~/server/api/trpc";
 import {TRPCError} from "@trpc/server";
 
-import {z} from "zod";
-
 import {NewProfileFormSchema} from "~/components/new-profile-form";
 
 export const profileRouter = createTRPCRouter({
@@ -21,8 +19,6 @@ export const profileRouter = createTRPCRouter({
   }),
 
   createUserProfile: protectedProcedure.input(NewProfileFormSchema).mutation(({ctx, input}) => {
-    console.log("input router", input);
-
     const profile = ctx.prisma.user.update({
       where: {
         id: ctx.session.user.id,

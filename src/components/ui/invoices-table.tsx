@@ -1,4 +1,5 @@
 import {useState} from "react";
+import Link from "next/link";
 
 import {
   type ColumnDef,
@@ -11,15 +12,14 @@ import {
   type ColumnFiltersState,
   getFilteredRowModel,
 } from "@tanstack/react-table";
-
 import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "~/components/ui/table";
+
 import {Badge} from "./badge";
 import {Button} from "./button";
-
-import {ArrowUpDown, BookOpen, BookOpenCheck, MoreHorizontal} from "lucide-react";
 import {Input} from "./input";
 import {Checkbox} from "./checkbox";
-import Link from "next/link";
+
+import {ArrowUpDown, BookOpen} from "lucide-react";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];

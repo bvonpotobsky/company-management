@@ -2,7 +2,7 @@ import * as React from "react";
 
 import {format} from "date-fns";
 
-import {formatAsPrice, getTotalInvoiceAmount} from "../lib/utils";
+import {formatAsPrice} from "../lib/utils";
 
 import {
   Body,
@@ -191,7 +191,7 @@ export const InvoiceEmail = () => {
               </Column>
               <Column style={productPriceVerticalLine}></Column>
               <Column style={productPriceLargeWrapper}>
-                <Text style={productPriceLarge}>${formatAsPrice(getTotalInvoiceAmount(invoice.Items))}</Text>
+                <Text style={productPriceLarge}>${formatAsPrice(1214213)}</Text>
               </Column>
             </Section>
             <Hr style={productPriceLineBottom} />

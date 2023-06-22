@@ -1,7 +1,7 @@
 import {useRouter} from "next/router";
 import * as z from "zod";
 import {format} from "date-fns";
-import {cn} from "~/lib/utils";
+import {cn, splitFullName} from "~/lib/utils";
 
 import {zodResolver} from "@hookform/resolvers/zod";
 import {useForm} from "react-hook-form";
@@ -15,6 +15,7 @@ import {Calendar} from "./ui/calendar";
 import {CalendarIcon} from "lucide-react";
 
 import {api} from "~/utils/api";
+import {useSession} from "next-auth/react";
 
 export default function NewProfileForm() {
   return (
@@ -38,16 +39,19 @@ export const NewProfileFormSchema = z.object({
 
 type ProfileFormValues = z.infer<typeof NewProfileFormSchema>;
 
-const defaultValues: Partial<ProfileFormValues> = {
-  firstName: "",
-  lastName: "",
-  phone: "",
-};
-
 export function ProfileForm() {
   const router = useRouter();
 
   const {mutate, isLoading: isUpdatingProfile} = api.profile.createUserProfile.useMutation();
+
+  const {data: session} = useSession();
+  const {firstName, lastName} = splitFullName(session?.user?.name ?? "");
+
+  const defaultValues: Partial<ProfileFormValues> = {
+    firstName: firstName,
+    lastName: lastName,
+    phone: "",
+  };
 
   const form = useForm<ProfileFormValues>({
     resolver: zodResolver(NewProfileFormSchema),
@@ -65,8 +69,9 @@ export function ProfileForm() {
       },
       {
         onSuccess: () => {
+          void router.push("/admin/waiting-for-approval");
           form.reset();
-          router.reload();
+          return;
         },
       }
     );

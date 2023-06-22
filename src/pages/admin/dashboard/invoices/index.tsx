@@ -2,7 +2,6 @@ import {type NextPage} from "next";
 import Head from "next/head";
 
 import AdminLayout from "~/components/layout.admin";
-import NewInvoiceForm from "~/components/new-invoice-form";
 import LoadingInvoices from "~/components/loading/loading.invoices";
 import {DataTable, columns} from "~/components/ui/invoices-table";
 
@@ -22,7 +21,7 @@ const Invoices: NextPage = () => {
       <AdminLayout>
         <section className="flex items-center justify-between">
           <h3 className="scroll-m-20 text-2xl font-semibold tracking-tight">Invoices</h3>
-          <NewInvoiceForm />
+          {/* <NewInvoiceForm /> */}
         </section>
         {isLoadingInvoices && <LoadingInvoices />} {/* I would like to handle this with suspense */}
         <section className="flex flex-col space-y-2">

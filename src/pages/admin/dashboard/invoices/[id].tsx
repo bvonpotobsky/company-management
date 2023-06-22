@@ -1,24 +1,14 @@
 import type {GetServerSidePropsContext, InferGetServerSidePropsType, NextPage} from "next";
 import Link from "next/link";
 
-import {format} from "date-fns";
-import {formatAsPrice, getTotalInvoiceAmount, truncate} from "~/lib/utils";
-
 import {Button} from "~/components/ui/button";
-import {ChevronLeft, Download} from "lucide-react";
-
-import {Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle} from "~/components/ui/card";
-import {Badge} from "~/components/ui/badge";
+import {ChevronLeft} from "lucide-react";
 
 import LayoutEmployee from "~/components/layout.employee";
-import LoadingInvoices from "~/components/loading/loading.invoices";
 
-import {api} from "~/utils/api";
 import {generateSSGHelper} from "~/server/helpers/ssgHelper";
 
-import {PDFDownloadLink, PDFViewer} from "@react-pdf/renderer";
-import ViewPDFDialog from "~/components/pdf/view-in-pdf";
-import InvoicePDF from "~/components/pdf/invoice-pdf";
+// import InvoicePDF from "~/components/pdf/invoice-pdf";
 
 export const getServerSideProps = async (context: GetServerSidePropsContext) => {
   const ssg = generateSSGHelper();
@@ -39,20 +29,20 @@ export const getServerSideProps = async (context: GetServerSidePropsContext) => 
 
 type ServerSideProps = InferGetServerSidePropsType<typeof getServerSideProps>;
 
-const ProjectIdPage: NextPage<ServerSideProps> = ({id}) => {
-  const {data: invoice, isLoading} = api.invoice.getInvoiceById.useQuery({id});
+const InvoicesIdPage: NextPage<ServerSideProps> = () => {
+  // const {data: invoice, isLoading} = api.invoice.getInvoiceById.useQuery({id});
 
-  // if (!invoice) return <div>Invoice not found</div>; // ToDo: 404 page
+  // // if (!invoice) return <div>Invoice not found</div>; // ToDo: 404 page
 
-  const {mutate} = api.email.sendInvoice.useMutation();
+  // const {mutate} = api.email.sendInvoice.useMutation();
 
-  const sendEmail = () => {
-    mutate(undefined, {
-      onSuccess: () => {
-        console.log("Email sent successfully");
-      },
-    });
-  };
+  // const sendEmail = () => {
+  //   mutate(undefined, {
+  //     onSuccess: () => {
+  //       console.log("Email sent successfully");
+  //     },
+  //   });
+  // };
 
   return (
     <LayoutEmployee>
@@ -64,13 +54,13 @@ const ProjectIdPage: NextPage<ServerSideProps> = ({id}) => {
             </Link>
           </Button>
 
-          {invoice && (
+          {/* {invoice && (
             <ViewPDFDialog>
               <PDFViewer width="100%" height="100%" showToolbar={false}>
                 <InvoicePDF invoice={invoice} />
               </PDFViewer>
             </ViewPDFDialog>
-          )}
+          )} */}
         </div>
 
         {/* Streaming or suspense */}
@@ -80,7 +70,7 @@ const ProjectIdPage: NextPage<ServerSideProps> = ({id}) => {
   );
 };
 
-export default ProjectIdPage;
+export default InvoicesIdPage;
 
 // {invoice && (
 //   <>

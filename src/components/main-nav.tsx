@@ -2,8 +2,13 @@ import Link from "next/link";
 import {useRouter} from "next/router";
 
 import {cn} from "~/lib/utils";
+import type {Route} from "~/lib/constants";
 
-export function MainNav({className, ...props}: React.HTMLAttributes<HTMLElement>) {
+export function MainNav({
+  className,
+  routes,
+  ...props
+}: {className?: string; routes: Route[]} & React.HTMLAttributes<HTMLDivElement>) {
   const router = useRouter();
 
   const isActive = (pathname: string) => {
@@ -12,46 +17,17 @@ export function MainNav({className, ...props}: React.HTMLAttributes<HTMLElement>
 
   return (
     <nav className={cn("flex items-center space-x-4 lg:space-x-6", className)} {...props}>
-      <Link
-        href="/admin/dashboard"
-        className={cn("text-sm font-medium transition-colors hover:text-primary", {
-          "text-muted-foreground": !isActive("/admin/dashboard"),
-        })}
-      >
-        Overview
-      </Link>
-      <Link
-        href="/admin/dashboard/invoices"
-        className={cn("text-sm font-medium transition-colors hover:text-primary", {
-          "text-muted-foreground": !isActive("/admin/dashboard/invoices"),
-        })}
-      >
-        Invoices
-      </Link>
-      <Link
-        href="/admin/dashboard/projects"
-        className={cn("text-sm font-medium transition-colors hover:text-primary", {
-          "text-muted-foreground": !isActive("/admin/dashboard/projects"),
-        })}
-      >
-        Projects
-      </Link>
-      <Link
-        href="/admin/dashboard/employees"
-        className={cn("text-sm font-medium transition-colors hover:text-primary", {
-          "text-muted-foreground": !isActive("/admin/dashboard/employees"),
-        })}
-      >
-        Employees
-      </Link>
-      <Link
-        href="/admin/dashboard/clients"
-        className={cn("text-sm font-medium transition-colors hover:text-primary", {
-          "text-muted-foreground": !isActive("/admin/dashboard/clients"),
-        })}
-      >
-        Clients
-      </Link>
+      {routes.map((route) => (
+        <Link
+          key={route.href}
+          href={route.href}
+          className={cn("text-sm font-medium transition-colors hover:text-primary", {
+            "text-muted-foreground": !isActive(route.href),
+          })}
+        >
+          {route.label}
+        </Link>
+      ))}
     </nav>
   );
 }

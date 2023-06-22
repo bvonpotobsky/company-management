@@ -1,4 +1,7 @@
 import Link from "next/link";
+import {signOut, useSession} from "next-auth/react";
+
+import {getNameInitials} from "~/lib/utils";
 
 import {CreditCard, LogOut, PlusCircle, Settings, User} from "lucide-react";
 
@@ -14,10 +17,6 @@ import {
   DropdownMenuShortcut,
   DropdownMenuTrigger,
 } from "~/components/ui/dropdown-menu";
-import {getNameInitials} from "~/lib/utils";
-
-import {api} from "~/utils/api";
-import {useSession} from "next-auth/react";
 
 export function UserNav() {
   const {data: session} = useSession();
@@ -71,7 +70,7 @@ export function UserNav() {
           </DropdownMenuItem>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
-        <DropdownMenuItem>
+        <DropdownMenuItem onClick={() => void signOut({redirect: true, callbackUrl: "/"})} className="cursor-pointer">
           <LogOut className="mr-2 h-4 w-4" />
           <span>Log out</span>
           <DropdownMenuShortcut>⇧⌘Q</DropdownMenuShortcut>
