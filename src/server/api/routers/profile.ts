@@ -3,6 +3,7 @@ import {TRPCError} from "@trpc/server";
 
 import {NewProfileFormSchema} from "~/components/new-profile-form";
 import {createProfileLog} from "~/lib/logger";
+import {z} from "zod";
 
 export const profileRouter = createTRPCRouter({
   getCurrentUserProfile: protectedProcedure.query(async ({ctx}) => {
@@ -61,6 +62,30 @@ export const profileRouter = createTRPCRouter({
     });
 
     return user;
+  }),
+
+  verifyProfile: protectedProcedure.input(z.object({profileId: z.string()})).mutation(async ({ctx, input}) => {
+    const profile = await ctx.prisma.profile.update({
+      where: {
+        id: input.profileId,
+      },
+      data: {
+        isVerified: true,
+      },
+    });
+
+    if (!profile) {
+      throw new TRPCError({code: "INTERNAL_SERVER_ERROR", message: "Something went wrong."});
+    }
+
+    await createProfileLog(ctx.prisma, {
+      type: "PROFILE",
+      action: "UPDATE",
+      details: `User [${ctx.session.user.id}] verified profile [${profile.id}].`,
+      profileId: profile.id,
+    });
+
+    return profile;
   }),
 
   getAll: protectedProcedure.query(async ({ctx}) => {

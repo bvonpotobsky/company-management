@@ -1,7 +1,6 @@
 import type {NextPage} from "next";
 import {signOut} from "next-auth/react";
 
-import AdminLayout from "~/components/layout.admin";
 import {Button} from "~/components/ui/button";
 
 const WaitingForApproval: NextPage = () => {
@@ -10,17 +9,7 @@ const WaitingForApproval: NextPage = () => {
   // If user exists and is approved, redirect to dashboard. !!!
 
   return (
-    <AdminLayout>
-      <WaitingForApprovalMessage />
-    </AdminLayout>
-  );
-};
-
-export default WaitingForApproval;
-
-export const WaitingForApprovalMessage = () => {
-  return (
-    <section className="flex h-full w-full flex-col items-center justify-center space-y-2">
+    <section className="flex h-screen w-full flex-col items-center justify-center space-y-2">
       <h2 className="scroll-m-20 border-b pb-2 text-xl font-semibold tracking-tight transition-colors sm:text-2xl">
         Awaits Company Approval
       </h2>
@@ -35,3 +24,5 @@ export const WaitingForApprovalMessage = () => {
     </section>
   );
 };
+
+export default WaitingForApproval;

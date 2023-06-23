@@ -8,8 +8,6 @@ import {MainNav} from "./main-nav";
 import {Search} from "./search";
 import {UserNav} from "./user-nav";
 import NavbarMobile from "./navbar-bottom.mobile";
-import NewProfileForm from "./new-profile-form";
-import {WaitingForApprovalMessage} from "~/pages/admin/waiting-for-approval";
 
 import {api} from "~/utils/api";
 import {ROUTES} from "~/lib/constants";
@@ -24,43 +22,20 @@ const AdminLayout = ({children}: {children: ReactNode}) => {
   // ToDO: Add a loading state
   if (isLoading) {
     return (
-      <main className="flex h-screen w-full flex-col">
-        <div className="h-screen w-full">
-          <p>Redirecting</p>
-        </div>
-      </main>
+      <div className="flex h-screen w-full flex-col items-center justify-center">
+        <p className="animate-pulse">Redirecting...</p>
+      </div>
     );
   }
 
   if (!profile) {
-    return (
-      <main className="flex h-screen w-full flex-col">
-        <div className="border-b">
-          <div className="flex h-16 items-center px-4">
-            <div className="ml-auto flex items-center space-x-4">
-              <UserNav />
-            </div>
-          </div>
-        </div>
-
-        <NewProfileForm />
-      </main>
-    );
+    void router.push("/admin/register-new-profile");
+    return null;
   }
 
   if (profile && !profile.isVerified) {
-    return (
-      <main className="flex h-screen w-full flex-col">
-        <div className="border-b">
-          <div className="flex h-16 items-center px-4">
-            <div className="ml-auto flex items-center space-x-4">
-              <UserNav />
-            </div>
-          </div>
-        </div>
-        <WaitingForApprovalMessage />
-      </main>
-    );
+    void router.push("/admin/waiting-for-approval");
+    return null;
   }
 
   if (profile && profile?.role !== "ADMIN") {
@@ -70,21 +45,38 @@ const AdminLayout = ({children}: {children: ReactNode}) => {
 
   return (
     <main className="flex h-screen w-full flex-col">
-      {windowSize === "mobile" && <NavbarMobile routes={ROUTES} />}
-      <div className="w-full border-b">
+      <nav className="w-full border-b">
         <div className="flex h-16 items-center px-4">
           {windowSize !== "mobile" && <MainNav routes={ROUTES} className="mx-6" />}
-          <div className="ml-auto flex items-center space-x-4">
+          <section className="flex w-full items-center justify-end space-x-4">
+            <Logo />
             <Search />
             <ThemeToggler />
             <UserNav />
-          </div>
+          </section>
         </div>
-      </div>
+      </nav>
 
       <section className="flex-1 space-y-4 p-4 pt-4">{children}</section>
+      {windowSize === "mobile" && <NavbarMobile routes={ROUTES} />}
     </main>
   );
 };
 
 export default AdminLayout;
+
+// ToDo: Make logo or something. Name???
+import {Acme} from "next/font/google";
+const font = Acme({
+  weight: "400",
+  display: "swap",
+  subsets: ["latin"],
+});
+
+export const Logo = () => {
+  return (
+    <h1 className="mr-auto" style={font.style}>
+      IMK
+    </h1>
+  );
+};

@@ -16,13 +16,13 @@ declare module "next-auth" {
     user: {
       id: string;
       // ...other properties
-      // role: UserRole;
+      // role: ProfileRole;
     } & DefaultSession["user"];
   }
 
   // interface User {
   //   // ...other properties
-  //   // role: UserRole;
+  //   role: ProfileRole;
   // }
 }
 
@@ -41,11 +41,7 @@ export const authOptions: NextAuthOptions = {
       },
     }),
   },
-  events: {
-    createUser: (message) => {
-      console.log("createUser", message);
-    },
-  },
+
   adapter: PrismaAdapter(prisma),
   providers: [
     GoogleProvider({
