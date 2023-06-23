@@ -2,12 +2,13 @@ import {useRouter} from "next/router";
 import type {ReactNode} from "react";
 import {useWindowSize} from "~/hooks/use-window-size";
 
+import ThemeToggler from "./theme-toggler";
+
 import {MainNav} from "./main-nav";
 import {Search} from "./search";
 import {UserNav} from "./user-nav";
 import NavbarMobile from "./navbar-bottom.mobile";
 import NewProfileForm from "./new-profile-form";
-import SettingsLayout from "./settings-layout";
 import {WaitingForApprovalMessage} from "~/pages/admin/waiting-for-approval";
 
 import {api} from "~/utils/api";
@@ -75,6 +76,7 @@ const AdminLayout = ({children}: {children: ReactNode}) => {
           {windowSize !== "mobile" && <MainNav routes={ROUTES} className="mx-6" />}
           <div className="ml-auto flex items-center space-x-4">
             <Search />
+            <ThemeToggler />
             <UserNav />
           </div>
         </div>

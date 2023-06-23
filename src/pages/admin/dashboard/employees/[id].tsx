@@ -1,8 +1,8 @@
 import type {GetServerSidePropsContext, InferGetServerSidePropsType, NextPage} from "next";
 import Link from "next/link";
 
-import {Button} from "~/components/ui/button";
-import {ChevronLeft} from "lucide-react";
+import {Button, buttonVariants} from "~/components/ui/button";
+import {CheckCircle, ChevronLeft} from "lucide-react";
 
 import LayoutEmployee from "~/components/layout.employee";
 
@@ -36,22 +36,22 @@ const EmployeeIdPage: NextPage<ServerSideProps> = ({id}) => {
     <LayoutEmployee>
       <section className="w-full p-2">
         <div className="flex w-full items-center justify-between">
-          <Button asChild variant="link">
-            <Link href="/admin/dashboard/employees" className="flex items-center font-bold">
-              <ChevronLeft className="mr-2" size={20} /> Go back
-            </Link>
-          </Button>
+          <Link
+            href="/admin/dashboard/employees"
+            className={buttonVariants({variant: "link", className: "flex items-center font-bold"})}
+          >
+            <ChevronLeft className="mr-2" size={20} /> Go back
+          </Link>
 
-          {JSON.stringify(employee, null, 2)}
-
-          {/* {invoice && (
-            <ViewPDFDialog>
-              <PDFViewer width="100%" height="100%" showToolbar={false}>
-                <InvoicePDF invoice={invoice} />
-              </PDFViewer>
-            </ViewPDFDialog>
-          )} */}
+          {employee && !employee.isVerified && (
+            <Button variant="secondary" className="flex items-center">
+              Verify
+              <CheckCircle className="ml-2" size={20} />
+            </Button>
+          )}
         </div>
+
+        {JSON.stringify(employee, null, 2)}
 
         {/* Streaming or suspense */}
         {/* {isLoading && <LoadingInvoices />} */}

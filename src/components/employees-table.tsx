@@ -22,6 +22,7 @@ import {Input} from "~/components/ui/input";
 import {Checkbox} from "~/components/ui/checkbox";
 
 import {ArrowUpDown} from "lucide-react";
+import {Badge} from "./ui/badge";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -30,7 +31,7 @@ interface DataTableProps<TData, TValue> {
 
 // This type is used to define the shape of our data.
 // You can use a Zod schema here if you want.
-type Employee = Omit<Profile, "isVerified">;
+type Employee = Profile;
 
 export const columns: ColumnDef<Employee>[] = [
   // I want to be able to click the row and redirtect to /admin/dashboard/invoices/[id]
@@ -72,9 +73,22 @@ export const columns: ColumnDef<Employee>[] = [
     header: () => <p className="">DOB</p>,
     cell: ({row}) => <p>{format(row.original.dob, "dd/MM/yyyy")}</p>,
   },
+  {
+    accessorKey: "isVerified",
+    header: () => <p className="">Status</p>,
+    cell: ({row}) => {
+      const isVerified = row.original.isVerified;
+
+      return (
+        <Badge variant={isVerified ? "paid" : "warning"} className="rounded-sm p-1 capitalize">
+          {isVerified ? "At work" : "Waiting"}
+        </Badge>
+      );
+    },
+  },
 ];
 
-export function DataTable<TData, TValue>({columns, data}: DataTableProps<TData, TValue>) {
+export function EmployeesTable<TData, TValue>({columns, data}: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [rowSelection, setRowSelection] = useState({});
