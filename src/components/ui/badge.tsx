@@ -15,6 +15,9 @@ const badgeVariants = cva(
         pending: "bg-orange-500/20 border-transparent text-pending-foreground hover:bg-orange-500/20 text-orange-500",
         paid: "bg-green-500/20 border-transparent text-green-500 hover:bg-green-500/20",
         draft: "bg-gray-500/20 border-transparent text-gray-500 hover:bg-gray-500/20",
+        info: "bg-blue-500/20 border-transparent text-blue-500 hover:bg-blue-500/20",
+        warning: "bg-yellow-500/20 border-transparent text-yellow-500 hover:bg-yellow-500/20",
+        error: "bg-red-500/20 border-transparent text-red-500 hover:bg-red-500/20",
       },
     },
     defaultVariants: {

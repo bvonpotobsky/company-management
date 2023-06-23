@@ -2,14 +2,15 @@ import {createTRPCRouter, protectedProcedure} from "~/server/api/trpc";
 import {TRPCError} from "@trpc/server";
 
 import {NewProfileFormSchema} from "~/components/new-profile-form";
+import {createProfileLog} from "~/lib/logger";
 
 export const profileRouter = createTRPCRouter({
-  getCurrentUserProfile: protectedProcedure.query(({ctx}) => {
+  getCurrentUserProfile: protectedProcedure.query(async ({ctx}) => {
     if (!ctx.session.user) {
       throw new TRPCError({code: "UNAUTHORIZED", message: "You must be logged in to do that."});
     }
 
-    const user = ctx.prisma.profile.findUnique({
+    const user = await ctx.prisma.profile.findUnique({
       where: {
         userId: ctx.session.user.id,
       },
@@ -18,8 +19,8 @@ export const profileRouter = createTRPCRouter({
     return user;
   }),
 
-  createUserProfile: protectedProcedure.input(NewProfileFormSchema).mutation(({ctx, input}) => {
-    const profile = ctx.prisma.user.update({
+  createUserProfile: protectedProcedure.input(NewProfileFormSchema).mutation(async ({ctx, input}) => {
+    const user = await ctx.prisma.user.update({
       where: {
         id: ctx.session.user.id,
       },
@@ -43,9 +44,23 @@ export const profileRouter = createTRPCRouter({
           },
         },
       },
+      include: {
+        Profile: true,
+      },
     });
 
-    return profile;
+    if (!user) {
+      throw new TRPCError({code: "INTERNAL_SERVER_ERROR", message: "Something went wrong."});
+    }
+
+    await createProfileLog(ctx.prisma, {
+      type: "PROFILE",
+      action: "CREATE",
+      details: `User ${user.id} created a profile.`,
+      profileId: ctx.session.user.id,
+    });
+
+    return user;
   }),
 
   getAll: protectedProcedure.query(async ({ctx}) => {

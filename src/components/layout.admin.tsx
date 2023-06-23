@@ -80,7 +80,7 @@ const AdminLayout = ({children}: {children: ReactNode}) => {
         </div>
       </div>
 
-      <section className="flex-1 space-y-4 p-8 pt-6">{children}</section>
+      <section className="flex-1 space-y-4 p-4 pt-4">{children}</section>
     </main>
   );
 };

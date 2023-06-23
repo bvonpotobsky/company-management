@@ -105,6 +105,7 @@ model Project {
   members ProjectMember[]
   address Address[]
   shift   Shift[]
+  Logs    Logs[]
 }
 
 enum ProjectRole {
@@ -204,16 +205,35 @@ model Address {
 }
 
 model Logs {
-  id        String   @id @default(cuid())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  message   String
-  type      String // create / update / delete
-  level     String // error / info / warning
+  id        String    @id @default(cuid())
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  action    LogAction
+  type      LogType
+  details   String
   meta      Json?
 
-  profile   Profile @relation(fields: [profileId], references: [userId])
-  profileId String
+  profile   Profile? @relation(fields: [profileId], references: [userId])
+  profileId String?
+
+  project   Project? @relation(fields: [projectId], references: [id])
+  projectId String?
 
   @@index([profileId])
+  @@index([projectId])
+}
+
+enum LogType {
+  PROFILE
+  PROJECT
+  INVOICE
+  SHIFT
+  BANK_ACCOUNT
+  ADDRESS
+}
+
+enum LogAction {
+  CREATE
+  UPDATE
+  DELETE
 }

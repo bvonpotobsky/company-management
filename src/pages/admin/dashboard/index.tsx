@@ -19,8 +19,8 @@ export default function DashboardPage() {
       <AdminLayout>
         <section className="flex-col space-y-4 md:flex">
           <AnalyticsCards />
-          <div className="grid w-full gap-4 md:grid-cols-2 lg:grid-cols-7">
-            <Card className="col-span-4 md:col-span-3">
+          <div className="grid w-full gap-4 md:grid-cols-2 lg:grid-cols-6">
+            <Card className="col-span-3">
               <CardHeader>
                 <CardTitle>Recent Logs</CardTitle>
                 <CardDescription>
@@ -31,7 +31,7 @@ export default function DashboardPage() {
                 <RecentLogs />
               </CardContent>
             </Card>
-            <Card className="col-span-4">
+            <Card className="col-span-3">
               <CardHeader>
                 <CardTitle>Overview</CardTitle>
               </CardHeader>

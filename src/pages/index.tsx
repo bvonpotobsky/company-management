@@ -50,7 +50,11 @@ const Home: NextPage = () => {
               <Button
                 variant="default"
                 size={"sm"}
-                onClick={session ? () => void signOut() : () => void signIn("google")}
+                onClick={
+                  session
+                    ? () => void signOut()
+                    : () => void signIn("google", {redirect: true, callbackUrl: "/admin/dashboard"})
+                }
               >
                 {session ? "Sign out" : "Sign in"}
               </Button>

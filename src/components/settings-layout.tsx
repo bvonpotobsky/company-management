@@ -1,7 +1,6 @@
 import {type Metadata} from "next";
 
 import {cn} from "~/lib/utils";
-import Image from "next/image";
 
 import {Separator} from "~/components/ui/separator";
 

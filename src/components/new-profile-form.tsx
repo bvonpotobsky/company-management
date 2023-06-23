@@ -10,14 +10,16 @@ import {useForm} from "react-hook-form";
 import {Separator} from "~/components/ui/separator";
 import {Button} from "~/components/ui/button";
 import {Input} from "~/components/ui/input";
-import {Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage} from "~/components/ui/form";
+import {Form, FormControl, FormField, FormItem, FormLabel, FormMessage} from "~/components/ui/form";
 import {Popover, PopoverContent, PopoverTrigger} from "./ui/popover";
 import {Calendar} from "./ui/calendar";
+import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "./ui/select";
+
+import {COUNTRIES} from "~/lib/constants";
+
 import {CalendarIcon} from "lucide-react";
 
 import {api} from "~/utils/api";
-import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "./ui/select";
-import {COUNTRIES} from "~/lib/constants";
 
 export default function NewProfileForm() {
   return (
@@ -50,7 +52,6 @@ export function ProfileForm() {
   const router = useRouter();
 
   const {mutate, isLoading: isUpdatingProfile} = api.profile.createUserProfile.useMutation();
-  const {mutate: addLog} = api.logs.userCreateProfile.useMutation();
 
   const {data: session} = useSession();
   const {firstName, lastName} = splitFullName(session?.user?.name ?? "");
@@ -82,7 +83,6 @@ export function ProfileForm() {
       },
       {
         onSuccess: () => {
-          addLog({type: "CREATE_PROFILE", level: "info"});
           void router.push("/admin/waiting-for-approval");
 
           form.reset();
