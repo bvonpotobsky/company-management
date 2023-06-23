@@ -2,10 +2,10 @@ import type {Metadata} from "next";
 
 import {Card, CardContent, CardDescription, CardHeader, CardTitle} from "~/components/ui/card";
 
-import {Overview} from "~/components/overview-graph";
-import RecentSales from "~/components/recent-sales";
-
 import AdminLayout from "~/components/layout.admin";
+
+import {Overview} from "~/components/overview-graph";
+import RecentLogs from "~/components/recent-logs";
 import AnalyticsCards from "~/components/ui/analytics-cards";
 
 export const metadata: Metadata = {
@@ -28,7 +28,7 @@ export default function DashboardPage() {
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <RecentSales />
+                <RecentLogs />
               </CardContent>
             </Card>
             <Card className="col-span-4">

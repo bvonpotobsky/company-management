@@ -50,6 +50,7 @@ export function ProfileForm() {
   const router = useRouter();
 
   const {mutate, isLoading: isUpdatingProfile} = api.profile.createUserProfile.useMutation();
+  const {mutate: addLog} = api.logs.userCreateProfile.useMutation();
 
   const {data: session} = useSession();
   const {firstName, lastName} = splitFullName(session?.user?.name ?? "");
@@ -81,7 +82,9 @@ export function ProfileForm() {
       },
       {
         onSuccess: () => {
+          addLog({type: "CREATE_PROFILE", level: "info"});
           void router.push("/admin/waiting-for-approval");
+
           form.reset();
           return;
         },

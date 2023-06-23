@@ -90,6 +90,7 @@ model Profile {
 
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId String @unique
+  Logs   Logs[]
 
   @@index([userId])
 }
@@ -202,12 +203,17 @@ model Address {
   @@index([projectId])
 }
 
-// model Logs {
-//   id        String    @id @default(cuid())
-//   createdAt DateTime  @default(now())
-//   updatedAt DateTime  @updatedAt
-//   deletedAt DateTime?
-//   message   String
-//   level     String
-//   meta      Json?
-// }
+model Logs {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  message   String
+  type      String // create / update / delete
+  level     String // error / info / warning
+  meta      Json?
+
+  profile   Profile @relation(fields: [profileId], references: [userId])
+  profileId String
+
+  @@index([profileId])
+}

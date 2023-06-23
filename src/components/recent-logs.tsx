@@ -1,8 +1,36 @@
+import {format} from "date-fns";
 import {Avatar, AvatarFallback, AvatarImage} from "~/components/ui/avatar";
+import {getNameInitials} from "~/lib/utils";
+import {api} from "~/utils/api";
 
-const RecentSales = () => {
+const RecentLogs = () => {
+  const {data: logs, isLoading} = api.logs.getAllLogs.useQuery();
+
   return (
     <section className="w-full space-y-8">
+      {isLoading && (
+        <section className="w-full space-y-8">
+          <div>
+            {/* Add Skeleton logs */}
+            <p>Is loading logs</p>
+          </div>
+        </section>
+      )}
+
+      {logs &&
+        logs.map((log) => (
+          <div className="flex items-center" key={log.id}>
+            <Avatar className="h-9 w-9">
+              <AvatarImage src={log.profile.user.image ?? undefined} alt="Avatar" />
+              <AvatarFallback>{getNameInitials(log.profile.user.name ?? "AA")}</AvatarFallback>
+            </Avatar>
+            <div className="ml-4 space-y-1">
+              <p className="text-sm font-medium leading-none">{log.profile.user.name}</p>
+              <p className="text-sm text-muted-foreground">{log.message}</p>
+            </div>
+            <div className="ml-auto font-medium">{format(log.updatedAt, "HH:mm - dd/MM/yy")}</div>
+          </div>
+        ))}
       <div className="flex items-center">
         <Avatar className="h-9 w-9">
           <AvatarImage src="/avatars/01.png" alt="Avatar" />
@@ -62,4 +90,4 @@ const RecentSales = () => {
   );
 };
 
-export default RecentSales;
+export default RecentLogs;

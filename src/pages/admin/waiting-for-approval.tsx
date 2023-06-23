@@ -5,14 +5,13 @@ import AdminLayout from "~/components/layout.admin";
 import {Button} from "~/components/ui/button";
 
 const WaitingForApproval: NextPage = () => {
+  // If user exists and is not approved, show this page.
+  // If user does not exist, show 404.
+  // If user exists and is approved, redirect to dashboard. !!!
+
   return (
     <AdminLayout>
-      <div className="flex h-full flex-col items-center justify-center">
-        <h1 className="text-2xl font-bold">Waiting for approval</h1>
-        <p className="text-center text-sm text-muted-foreground">
-          Your profile is waiting for approval from the company.
-        </p>
-      </div>
+      <WaitingForApprovalMessage />
     </AdminLayout>
   );
 };
