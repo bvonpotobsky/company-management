@@ -7,6 +7,7 @@ import {Button} from "~/components/ui/button";
 import {signIn, signOut, useSession} from "next-auth/react";
 import {Avatar, AvatarFallback, AvatarImage} from "~/components/ui/avatar";
 import {getNameInitials} from "~/lib/utils";
+import {env} from "~/env.mjs";
 
 const Home: NextPage = () => {
   const {data: session} = useSession();
@@ -53,7 +54,7 @@ const Home: NextPage = () => {
                 onClick={
                   session
                     ? () => void signOut()
-                    : () => void signIn("google", {redirect: true, callbackUrl: "/admin/dashboard"})
+                    : () => void signIn("google", {redirect: true, callbackUrl: `${env.NEXTAUTH_URL}/admin/dashboard`})
                 }
               >
                 {session ? "Sign out" : "Sign in"}

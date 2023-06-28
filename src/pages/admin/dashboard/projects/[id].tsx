@@ -28,7 +28,12 @@ export const getServerSideProps = async (context: GetServerSidePropsContext) => 
   const id = context.params?.id;
 
   if (!id || typeof id !== "string")
-    return {redirect: {destination: "/employee/dashboard/employees", permanent: false}};
+    return {
+      redirect: {
+        destination: "/employee/dashboard/projects",
+        permanent: false,
+      },
+    };
 
   await ssg.employee.getEmployeeById.prefetch({id});
 
