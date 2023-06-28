@@ -54,7 +54,11 @@ const Home: NextPage = () => {
                 onClick={
                   session
                     ? () => void signOut()
-                    : () => void signIn("google", {redirect: true, callbackUrl: `${env.NEXTAUTH_URL}/admin/dashboard`})
+                    : () =>
+                        void signIn("google", {
+                          redirect: true,
+                          callbackUrl: `${env.NEXT_PUBLIC_URL}/admin/dashboard`,
+                        })
                 }
               >
                 {session ? "Sign out" : "Sign in"}
