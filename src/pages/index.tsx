@@ -57,7 +57,7 @@ const Home: NextPage = () => {
                     : () =>
                         void signIn("google", {
                           redirect: true,
-                          callbackUrl: `${env.NEXT_PUBLIC_URL}/admin/dashboard`,
+                          callbackUrl: `${env.NEXT_PUBLIC_BASE_URL}/admin/dashboard`,
                         })
                 }
               >
@@ -65,18 +65,6 @@ const Home: NextPage = () => {
               </Button>
             </div>
           </div>
-
-          <p className="max-w-2xl px-2 text-lg font-semibold text-white">
-            Welcome to EasyInvoice, the hassle-free solution for effortless invoicing. Say goodbye to complex
-            spreadsheets and time-consuming paperwork.
-          </p>
-
-          {/* <p>
-            With EasyInvoice, creating, sending, and managing invoices is a breeze. Enjoy the convenience of automated
-            invoicing, personalized branding, and real-time tracking. Whether you're a freelancer or a small business
-            owner, EasyInvoice streamlines your financial management. Start optimizing your invoicing process today with
-            EasyInvoice.
-          </p> */}
         </div>
       </main>
     </>
