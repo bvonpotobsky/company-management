@@ -81,7 +81,7 @@ export const columns: ColumnDef<Invoices>[] = [
       const value = row.getValue("status");
       return (
         <Badge
-          variant={value === "paid" ? "paid" : value === "pending" ? "pending" : "draft"}
+          variant={value === "paid" ? "success" : value === "pending" ? "pending" : "draft"}
           className="rounded-sm capitalize"
         >
           {value as string}

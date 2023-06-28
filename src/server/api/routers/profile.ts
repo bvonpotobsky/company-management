@@ -1,9 +1,10 @@
 import {createTRPCRouter, protectedProcedure} from "~/server/api/trpc";
 import {TRPCError} from "@trpc/server";
 
+import {z} from "zod";
+
 import {NewProfileFormSchema} from "~/components/new-profile-form";
 import {createProfileLog} from "~/lib/logger";
-import {z} from "zod";
 
 export const profileRouter = createTRPCRouter({
   getCurrentUserProfile: protectedProcedure.query(async ({ctx}) => {
@@ -26,7 +27,7 @@ export const profileRouter = createTRPCRouter({
         id: ctx.session.user.id,
       },
       data: {
-        Profile: {
+        profile: {
           create: {
             firstName: input.firstName,
             lastName: input.lastName,
@@ -46,7 +47,7 @@ export const profileRouter = createTRPCRouter({
         },
       },
       include: {
-        Profile: true,
+        profile: true,
       },
     });
 
@@ -55,10 +56,13 @@ export const profileRouter = createTRPCRouter({
     }
 
     await createProfileLog(ctx.prisma, {
+      profileId: ctx.session.user.id,
       type: "PROFILE",
       action: "CREATE",
-      details: `User ${user.id} created a profile.`,
-      profileId: ctx.session.user.id,
+      message: `${user.name ?? "User"} created a profile.`,
+      meta: {
+        details: `User [${user.id}] created a profile.`,
+      },
     });
 
     return user;
@@ -81,7 +85,10 @@ export const profileRouter = createTRPCRouter({
     await createProfileLog(ctx.prisma, {
       type: "PROFILE",
       action: "UPDATE",
-      details: `User [${ctx.session.user.id}] verified profile [${profile.id}].`,
+      message: `Profile ${profile.firstName} was verified.`,
+      meta: {
+        details: `Admin [${ctx.session.user.id}] was verified.`,
+      },
       profileId: profile.id,
     });
 

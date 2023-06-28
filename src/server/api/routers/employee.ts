@@ -18,6 +18,15 @@ export const employeeRouter = createTRPCRouter({
       where: {
         id: input.id,
       },
+      include: {
+        user: {
+          select: {
+            image: true,
+            email: true,
+          },
+        },
+        address: true,
+      },
     });
 
     if (!employee) {

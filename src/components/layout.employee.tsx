@@ -1,13 +1,10 @@
 // import {useWindowSize} from "~/hooks/use-window-size";
 
-import Navbar from "./navbar";
-
 const LayoutEmployee = ({children}: {children: React.ReactNode}) => {
   // const windowSize = useWindowSize();
 
   return (
     <main className="flex h-screen w-full flex-col">
-      <Navbar />
       <div>{children}</div>
 
       {/* {windowSize && windowSize === "mobile" && <NavbarMobile routes={ROUTES} />} */}

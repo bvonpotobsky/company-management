@@ -1,19 +1,17 @@
 import type {Logs, PrismaClient} from "@prisma/client";
 
-type LogProps = {
-  type: Logs["type"];
-  action: Logs["action"];
-  details: string;
-  profileId?: string;
-  projectId?: string;
-};
+type CreateProfileLog = Omit<Logs, "id" | "createdAt" | "updatedAt" | "projectId">;
 
-export const createProfileLog = async (prisma: PrismaClient, {type, action, details, profileId}: LogProps) => {
+export const createProfileLog = async (
+  prisma: PrismaClient,
+  {type, action, message, profileId, meta}: CreateProfileLog
+) => {
   const log = await prisma.logs.create({
     data: {
-      details,
+      message,
       type,
       action,
+      meta: JSON.stringify(meta),
       profileId,
     },
   });

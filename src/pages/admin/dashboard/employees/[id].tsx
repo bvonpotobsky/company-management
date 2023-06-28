@@ -1,9 +1,10 @@
 import type {GetServerSidePropsContext, InferGetServerSidePropsType, NextPage} from "next";
 import Link from "next/link";
+import {useToast} from "~/components/ui/use-toast";
+import {format} from "date-fns";
 
-import {CheckCircle, ChevronLeft} from "lucide-react";
+import {CheckCircle, ChevronLeft, Mail, MapPin, Phone} from "lucide-react";
 
-import {Button, buttonVariants} from "~/components/ui/button";
 import {Alert, AlertDescription, AlertTitle} from "~/components/ui/alert";
 import {
   AlertDialog,
@@ -15,11 +16,15 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "~/components/ui/alert-dialog";
+import {Badge} from "~/components/ui/badge";
+import {Button, buttonVariants} from "~/components/ui/button";
+import {Card, CardHeader, CardContent, CardTitle, CardDescription, CardFooter} from "~/components/ui/card";
 
 import AdminLayout from "~/components/layout.admin";
+import LoadingProfile from "~/components/loading/loading.profile";
 
 import {generateSSGHelper} from "~/server/helpers/ssgHelper";
-import {api} from "~/utils/api";
+import {api, type RouterOutputs} from "~/utils/api";
 
 export const getServerSideProps = async (context: GetServerSidePropsContext) => {
   const ssg = generateSSGHelper();
@@ -49,7 +54,7 @@ const EmployeeIdPage: NextPage<ServerSideProps> = ({id}) => {
       <section className="w-full">
         {employee && !employee.isVerified && (
           <Alert variant="warning" className="mb-3 rounded-sm">
-            <AlertTitle className="font-bold">Unverified employee </AlertTitle>
+            <AlertTitle className="font-bold">Unverified employee</AlertTitle>
             <AlertDescription>
               This employee has not yet been verified. Please verify this employee before they can start working.
             </AlertDescription>
@@ -63,22 +68,109 @@ const EmployeeIdPage: NextPage<ServerSideProps> = ({id}) => {
           >
             <ChevronLeft className="mr-1" size={20} /> Go back
           </Link>
-
           {employee && !employee.isVerified && <VerifyEmployeeAlert profileId={employee.id} />}
+          {employee && employee.isVerified && (
+            <Badge variant="success" className="rounded-sm py-1 text-base">
+              Verified
+            </Badge>
+          )}
         </div>
-
-        {/* Streaming or suspense */}
-        {/* {isLoading && <LoadingInvoices />} */}
       </section>
+      {isLoading && <LoadingProfile />} {/* Streaming or Suspense */}
+      {!isLoading && employee && <EmployeeCard employee={employee} />}
+      <RecentActivity id={id} />
     </AdminLayout>
   );
 };
 
 export default EmployeeIdPage;
 
+const RecentActivity: React.FC<{id: string}> = ({id}) => {
+  const {data: logs, isLoading} = api.logs.getLogsByProfileId.useQuery({id});
+
+  return (
+    <Card className="w-full">
+      <CardHeader className="flex flex-row items-center justify-between">
+        <CardTitle className="font-bold">Recent Activity</CardTitle>
+        <Link className={buttonVariants({variant: "outline"})} href={`/admin/dashboard/employees/${id}/logs`}>
+          View all
+        </Link>
+      </CardHeader>
+
+      {isLoading && (
+        <section className="w-full space-y-8">
+          <div>
+            <p>Is loading logs</p>
+          </div>
+        </section>
+      )}
+
+      <CardContent>
+        {logs &&
+          logs.map((log) => (
+            <div className="flex items-center" key={log.id}>
+              <div className="flex space-x-2 space-y-1">
+                <Badge
+                  className="rounded-sm uppercase"
+                  variant={log.action === "CREATE" ? "info" : log.action === "UPDATE" ? "warning" : "destructive"}
+                >
+                  {log.type} {log.action}
+                </Badge>
+                {/* <p className="text-sm font-medium capitalize leading-none">
+                {log.profile?.firstName} {log.profile?.lastName}
+              </p> */}
+              </div>
+
+              <div className="ml-auto flex flex-row text-right text-xs text-muted-foreground">
+                <p>{format(log.updatedAt, "HH:mmaaa")}</p>
+                <span className="mx-1">·</span>
+                <p>{format(log.updatedAt, "dd MMM")}</p>
+              </div>
+            </div>
+          ))}
+      </CardContent>
+    </Card>
+  );
+};
+
+type Employee = RouterOutputs["employee"]["getEmployeeById"];
+const EmployeeCard = ({employee}: {employee: Employee}) => {
+  return (
+    <Card className="flex flex-col">
+      <CardHeader className="flex flex-row items-center">
+        <CardTitle className="text-2xl">
+          {employee.firstName} {employee.lastName}
+        </CardTitle>
+        <Button variant="outline" className="ml-auto">
+          Edit
+        </Button>
+      </CardHeader>
+
+      <CardContent className="flex flex-row items-center space-x-2">
+        <Mail />
+        <CardDescription>{employee.user.email}</CardDescription>
+      </CardContent>
+
+      <CardContent className="flex flex-row items-center space-x-2">
+        <Phone />
+        <CardDescription>{employee.phone}</CardDescription>
+      </CardContent>
+
+      <CardContent className="flex flex-row items-center space-x-2">
+        <MapPin />
+        <CardDescription>
+          {employee.address.street}, {employee.address.city}, {employee.address.state}
+        </CardDescription>
+      </CardContent>
+    </Card>
+  );
+};
+
 const VerifyEmployeeAlert = ({profileId}: {profileId: string}) => {
-  const {mutate} = api.profile.verifyProfile.useMutation();
+  const {toast} = useToast();
   const ctx = api.useContext();
+
+  const {mutate} = api.profile.verifyProfile.useMutation();
 
   const verifyProfile = () => {
     mutate(
@@ -86,6 +178,7 @@ const VerifyEmployeeAlert = ({profileId}: {profileId: string}) => {
       {
         onSuccess: () => {
           void ctx.employee.getEmployeeById.invalidate({id: profileId});
+          toast({description: "Employee verified."});
         },
       }
     );

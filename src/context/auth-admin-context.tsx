@@ -1,5 +1,6 @@
 import {type ReactNode, createContext} from "react";
 import {useRouter} from "next/router";
+import {useSession} from "next-auth/react";
 
 import {api} from "~/utils/api";
 
@@ -14,10 +15,10 @@ const AdminAuthContext = createContext<AuthContextType>({auth: null});
 export const AdminAuthProvider = ({children}: {children: ReactNode}) => {
   const router = useRouter();
 
-  const {data: profile, isLoading} = api.profile.getCurrentUserProfile.useQuery();
+  const {data: session, status} = useSession();
+  const {data: profile, isLoading: isLoadingProfile} = api.profile.getCurrentUserProfile.useQuery();
 
-  // ToDO: Add a loading state
-  if (isLoading) {
+  if (status === "loading" || isLoadingProfile) {
     return (
       <div className="dark flex h-screen w-full flex-col items-center justify-center">
         <p className="animate-pulse">Redirecting...</p>
@@ -25,7 +26,13 @@ export const AdminAuthProvider = ({children}: {children: ReactNode}) => {
     );
   }
 
-  if (!profile) {
+  if (!session && status === "unauthenticated") {
+    void router.push("/");
+    return null;
+  }
+
+  // ToDO: Add a loading state
+  if (!profile && !isLoadingProfile) {
     void router.push("/admin/register-new-profile");
     return null;
   }

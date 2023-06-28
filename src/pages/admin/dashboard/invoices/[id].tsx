@@ -7,29 +7,31 @@ import {ChevronLeft} from "lucide-react";
 import LayoutEmployee from "~/components/layout.employee";
 
 import {generateSSGHelper} from "~/server/helpers/ssgHelper";
+import AdminLayout from "~/components/layout.admin";
 
 // import InvoicePDF from "~/components/pdf/invoice-pdf";
 
-export const getServerSideProps = async (context: GetServerSidePropsContext) => {
-  const ssg = generateSSGHelper();
+// export const getServerSideProps = async (context: GetServerSidePropsContext) => {
+//   const ssg = generateSSGHelper();
 
-  const id = context.params?.id;
+//   const id = context.params?.id;
 
-  if (!id || typeof id !== "string") return {redirect: {destination: "/employee/dashboard/invoices", permanent: false}};
+//   if (!id || typeof id !== "string") return {redirect: {destination: "/employee/dashboard/invoices", permanent: false}};
 
-  await ssg.invoice.getInvoiceById.prefetch({id});
+//   await ssg.invoice.getInvoiceById.prefetch({id});
 
-  return {
-    props: {
-      trpcState: ssg.dehydrate(),
-      id,
-    },
-  };
-};
+//   return {
+//     props: {
+//       trpcState: ssg.dehydrate(),
+//       id,
+//     },
+//   };
+// };
 
-type ServerSideProps = InferGetServerSidePropsType<typeof getServerSideProps>;
+// type ServerSideProps = InferGetServerSidePropsType<typeof getServerSideProps>;
 
-const InvoicesIdPage: NextPage<ServerSideProps> = () => {
+// const InvoicesIdPage: NextPage<ServerSideProps> = () => {
+const InvoicesIdPage: NextPage = () => {
   // const {data: invoice, isLoading} = api.invoice.getInvoiceById.useQuery({id});
 
   // // if (!invoice) return <div>Invoice not found</div>; // ToDo: 404 page
@@ -45,7 +47,7 @@ const InvoicesIdPage: NextPage<ServerSideProps> = () => {
   // };
 
   return (
-    <LayoutEmployee>
+    <AdminLayout>
       <section className="w-full p-2">
         <div className="flex w-full items-center justify-between">
           <Button asChild variant="link">
@@ -66,7 +68,7 @@ const InvoicesIdPage: NextPage<ServerSideProps> = () => {
         {/* Streaming or suspense */}
         {/* {isLoading && <LoadingInvoices />} */}
       </section>
-    </LayoutEmployee>
+    </AdminLayout>
   );
 };
 

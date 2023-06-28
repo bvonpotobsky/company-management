@@ -80,7 +80,7 @@ export const columns: ColumnDef<Employee>[] = [
       const isVerified = row.original.isVerified;
 
       return (
-        <Badge variant={isVerified ? "paid" : "warning"} className="rounded-sm p-1 capitalize">
+        <Badge variant={isVerified ? "success" : "warning"} className="rounded-sm p-1 capitalize">
           {isVerified ? "At work" : "Waiting"}
         </Badge>
       );
