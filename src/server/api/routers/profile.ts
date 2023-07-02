@@ -22,32 +22,9 @@ export const profileRouter = createTRPCRouter({
   }),
 
   createUserProfile: protectedProcedure.input(NewProfileFormSchema).mutation(async ({ctx, input}) => {
-    const user = await ctx.prisma.user.update({
+    const user = await ctx.prisma.user.findUnique({
       where: {
         id: ctx.session.user.id,
-      },
-      data: {
-        profile: {
-          create: {
-            firstName: input.firstName,
-            lastName: input.lastName,
-            phone: input.phone,
-            dob: input.dob,
-            role: "EMPLOYEE",
-            address: {
-              create: {
-                street: input.street,
-                city: input.city,
-                state: input.state,
-                zip: input.zip,
-                country: input.country,
-              },
-            },
-          },
-        },
-      },
-      include: {
-        profile: true,
       },
     });
 
@@ -55,8 +32,36 @@ export const profileRouter = createTRPCRouter({
       throw new TRPCError({code: "INTERNAL_SERVER_ERROR", message: "Something went wrong."});
     }
 
+    const profile = await ctx.prisma.profile.create({
+      data: {
+        firstName: input.firstName,
+        lastName: input.lastName,
+        phone: input.phone,
+        dob: input.dob,
+        role: "EMPLOYEE",
+        address: {
+          create: {
+            street: input.street,
+            city: input.city,
+            state: input.state,
+            zip: input.zip,
+            country: input.country,
+          },
+        },
+        user: {
+          connect: {
+            id: user.id,
+          },
+        },
+      },
+    });
+
+    if (!profile) {
+      throw new TRPCError({code: "INTERNAL_SERVER_ERROR", message: "Something went wrong."});
+    }
+
     await createProfileLog(ctx.prisma, {
-      profileId: ctx.session.user.id,
+      profileId: profile.id,
       type: "PROFILE",
       action: "CREATE",
       message: `${user.name ?? "User"} created a profile.`,
@@ -83,13 +88,13 @@ export const profileRouter = createTRPCRouter({
     }
 
     await createProfileLog(ctx.prisma, {
+      profileId: profile.id,
       type: "PROFILE",
       action: "UPDATE",
-      message: `Profile ${profile.firstName} was verified.`,
+      message: `${profile.firstName} ${profile.lastName} was verified.`,
       meta: {
-        details: `Admin [${ctx.session.user.id}] was verified.`,
+        details: `User verified by admin: [${ctx.session.user.id}].`,
       },
-      profileId: profile.id,
     });
 
     return profile;

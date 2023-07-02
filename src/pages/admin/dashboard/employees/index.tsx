@@ -7,7 +7,7 @@ import AdminLayout from "~/components/layout.admin";
 import {api} from "~/utils/api";
 
 const EmployeesPage: NextPage = () => {
-  const {data: employees} = api.employee.getAllEmployees.useQuery();
+  const {data: employees} = api.employee.getAll.useQuery();
 
   return (
     <>

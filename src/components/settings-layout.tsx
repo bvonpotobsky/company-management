@@ -15,29 +15,17 @@ export const metadata: Metadata = {
 };
 
 const sidebarNavItems = [
-  {
-    title: "Profile",
-    href: "/examples/forms",
-  },
-  {
-    title: "Account",
-    href: "/examples/forms/account",
-  },
-  {
-    title: "Appearance",
-    href: "/examples/forms/appearance",
-  },
-  {
-    title: "Notifications",
-    href: "/examples/forms/notifications",
-  },
+  {title: "Profile", href: "/examples/forms"},
+  {title: "Account", href: "/examples/forms/account"},
+  {title: "Appearance", href: "/examples/forms/appearance"},
+  {title: "Notifications", href: "/examples/forms/notifications"},
 ];
 
 interface SettingsLayoutProps {
   children: React.ReactNode;
 }
 
-export default function SettingsLayout({children}: SettingsLayoutProps) {
+const SettingsLayout = ({children}: SettingsLayoutProps) => {
   return (
     <>
       <div className="space-y-6 p-4 pb-16">
@@ -55,7 +43,9 @@ export default function SettingsLayout({children}: SettingsLayoutProps) {
       </div>
     </>
   );
-}
+};
+
+export default SettingsLayout;
 
 interface SidebarNavProps extends React.HTMLAttributes<HTMLElement> {
   items: {
@@ -64,7 +54,7 @@ interface SidebarNavProps extends React.HTMLAttributes<HTMLElement> {
   }[];
 }
 
-export function SidebarNav({className, items, ...props}: SidebarNavProps) {
+export const SidebarNav = ({className, items, ...props}: SidebarNavProps) => {
   const pathname = usePathname();
 
   return (
@@ -84,4 +74,4 @@ export function SidebarNav({className, items, ...props}: SidebarNavProps) {
       ))}
     </nav>
   );
-}
+};

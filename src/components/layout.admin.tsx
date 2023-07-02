@@ -1,13 +1,13 @@
 import type {ReactNode} from "react";
 import {useWindowSize} from "~/hooks/use-window-size";
 
-import ThemeToggler from "./theme-toggler";
-
-import {MainNav} from "./main-nav";
-import {Search} from "./search";
-import {UserNav} from "./user-nav";
-import NavbarMobile from "./navbar-bottom.mobile";
 import {AdminAuthProvider} from "~/context/auth-admin-context";
+
+import ThemeToggler from "./theme-toggler";
+import MainNav from "./main-nav";
+import Search from "./search";
+import UserNav from "./user-nav";
+import NavbarMobile from "./navbar-bottom.mobile";
 
 import {ROUTES} from "~/lib/constants";
 

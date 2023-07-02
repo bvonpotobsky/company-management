@@ -1,7 +1,7 @@
 import type {GetServerSidePropsContext, InferGetServerSidePropsType, NextPage} from "next";
 import Link from "next/link";
-import {useToast} from "~/components/ui/use-toast";
 import {format} from "date-fns";
+import {useToast} from "~/components/ui/use-toast";
 
 import {CheckCircle, ChevronLeft, Mail, MapPin, Phone} from "lucide-react";
 
@@ -39,7 +39,7 @@ export const getServerSideProps = async (context: GetServerSidePropsContext) => 
       },
     };
 
-  await ssg.employee.getEmployeeById.prefetch({id});
+  await ssg.employee.getById.prefetch({id});
 
   return {
     props: {
@@ -52,7 +52,7 @@ export const getServerSideProps = async (context: GetServerSidePropsContext) => 
 type ServerSideProps = InferGetServerSidePropsType<typeof getServerSideProps>;
 
 const EmployeeIdPage: NextPage<ServerSideProps> = ({id}) => {
-  const {data: employee, isLoading} = api.employee.getEmployeeById.useQuery({id});
+  const {data: employee, isLoading} = api.employee.getById.useQuery({id});
 
   return (
     <AdminLayout>
@@ -91,7 +91,11 @@ const EmployeeIdPage: NextPage<ServerSideProps> = ({id}) => {
 export default EmployeeIdPage;
 
 const RecentActivity: React.FC<{id: string}> = ({id}) => {
-  const {data: logs, isLoading} = api.logs.getLogsByProfileId.useQuery({id});
+  const {data: logs, isLoading} = api.logs.getAllByProfileId.useQuery({profileId: id});
+
+  console.log({id});
+
+  console.log({logs});
 
   return (
     <Card className="w-full">
@@ -112,7 +116,7 @@ const RecentActivity: React.FC<{id: string}> = ({id}) => {
 
       <CardContent>
         {logs &&
-          logs.map((log) => (
+          logs?.map((log) => (
             <div className="flex items-center" key={log.id}>
               <div className="flex space-x-2 space-y-1">
                 <Badge
@@ -138,8 +142,8 @@ const RecentActivity: React.FC<{id: string}> = ({id}) => {
   );
 };
 
-type Employee = RouterOutputs["employee"]["getEmployeeById"];
-const EmployeeCard = ({employee}: {employee: Employee}) => {
+type Employee = RouterOutputs["employee"]["getById"];
+const EmployeeCard: React.FC<{employee: Employee}> = ({employee}) => {
   return (
     <Card className="flex flex-col">
       <CardHeader className="flex flex-row items-center">
@@ -171,7 +175,7 @@ const EmployeeCard = ({employee}: {employee: Employee}) => {
   );
 };
 
-const VerifyEmployeeAlert = ({profileId}: {profileId: string}) => {
+const VerifyEmployeeAlert: React.FC<{profileId: string}> = ({profileId}) => {
   const {toast} = useToast();
   const ctx = api.useContext();
 
@@ -182,7 +186,7 @@ const VerifyEmployeeAlert = ({profileId}: {profileId: string}) => {
       {profileId},
       {
         onSuccess: () => {
-          void ctx.employee.getEmployeeById.invalidate({id: profileId});
+          void ctx.employee.getById.invalidate({id: profileId});
           toast({description: "Employee verified."});
         },
       }

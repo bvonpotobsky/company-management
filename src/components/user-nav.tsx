@@ -18,7 +18,7 @@ import {
   DropdownMenuTrigger,
 } from "~/components/ui/dropdown-menu";
 
-export function UserNav() {
+const UserNav: React.FC = () => {
   const {data: session} = useSession();
 
   return (
@@ -78,4 +78,6 @@ export function UserNav() {
       </DropdownMenuContent>
     </DropdownMenu>
   );
-}
+};
+
+export default UserNav;

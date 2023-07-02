@@ -77,22 +77,24 @@ model Profile {
   createdAt  DateTime    @default(now())
   updatedAt  DateTime    @updatedAt
   dob        DateTime
-  role       ProfileRole
+  role       ProfileRole @default(EMPLOYEE)
   isVerified Boolean     @default(false)
 
-  address Address @relation(fields: [addressId], references: [id])
+  address   Address @relation(fields: [addressId], references: [id])
+  addressId String  @unique
+
+  bankAccount BankAccount[]
 
   projectMember ProjectMember[]
-  bankAccount   BankAccount[]
+  shift         Shift[]
+  invoices      Invoices[]
+  logs          Logs[]
 
-  shift    Shift[]
-  invoices Invoices[]
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  user User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-  logs Logs[]
+  userId String @unique
 
-  userId    String @unique
-  addressId String @unique
+  @@index([userId])
 }
 
 model Project {
@@ -123,17 +125,17 @@ enum ProjectRole {
   MANAGER
   ADMIN
   SUPERVISOR
+  EMPLOYEE
 }
 
 model ProjectMember {
   id   String      @id @default(cuid())
   role ProjectRole
 
-  profile   Profile @relation(fields: [profileId], references: [userId])
   profileId String
-
-  project   Project @relation(fields: [projectId], references: [id])
+  profile   Profile @relation(fields: [profileId], references: [userId])
   projectId String
+  project   Project @relation(fields: [projectId], references: [id])
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -143,11 +145,12 @@ model ProjectMember {
 }
 
 model Shift {
-  id        String   @id @default(cuid())
-  start     DateTime
-  end       DateTime
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id        String    @id @default(cuid())
+  start     DateTime // Normalize server and db time
+  end       DateTime?
+  date      DateTime  @default(now())
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
 
   profile   Profile @relation(fields: [profileId], references: [userId])
   profileId String
@@ -216,7 +219,7 @@ model Logs {
   action    LogAction
   type      LogType
   message   String
-  meta      Json?
+  meta      Json
 
   profile   Profile? @relation(fields: [profileId], references: [userId])
   profileId String?  @unique

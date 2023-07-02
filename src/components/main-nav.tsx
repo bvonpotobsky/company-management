@@ -4,11 +4,11 @@ import {useRouter} from "next/router";
 import {cn} from "~/lib/utils";
 import type {Route} from "~/lib/constants";
 
-export function MainNav({
+const MainNav: React.FC<{className?: string; routes: Route[] & React.HTMLAttributes<HTMLDivElement>}> = ({
   className,
   routes,
   ...props
-}: {className?: string; routes: Route[]} & React.HTMLAttributes<HTMLDivElement>) {
+}) => {
   const router = useRouter();
 
   const isActive = (pathname: string) => {
@@ -30,4 +30,6 @@ export function MainNav({
       ))}
     </nav>
   );
-}
+};
+
+export default MainNav;

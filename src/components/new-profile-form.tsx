@@ -21,7 +21,7 @@ import {CalendarIcon} from "lucide-react";
 
 import {api} from "~/utils/api";
 
-export default function NewProfileForm() {
+const NewProfileForm: React.FC = () => {
   return (
     <div className="space-y-6 p-4">
       <div>
@@ -32,7 +32,9 @@ export default function NewProfileForm() {
       <ProfileForm />
     </div>
   );
-}
+};
+
+export default NewProfileForm;
 
 export const NewProfileFormSchema = z.object({
   firstName: z.string().min(2, {message: "Username must be at least 2 characters."}),
@@ -48,7 +50,7 @@ export const NewProfileFormSchema = z.object({
 
 type ProfileFormValues = z.infer<typeof NewProfileFormSchema>;
 
-export function ProfileForm() {
+export const ProfileForm: React.FC = () => {
   const router = useRouter();
 
   const {mutate, isLoading: isUpdatingProfile} = api.profile.createUserProfile.useMutation();
@@ -272,4 +274,4 @@ export function ProfileForm() {
       </form>
     </Form>
   );
-}
+};

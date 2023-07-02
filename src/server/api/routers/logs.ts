@@ -1,10 +1,11 @@
 import {createTRPCRouter, protectedProcedure} from "~/server/api/trpc";
 import {TRPCError} from "@trpc/server";
+
 import {z} from "zod";
 
 export const logsRouter = createTRPCRouter({
-  getAllLogs: protectedProcedure.query(({ctx}) => {
-    const logs = ctx.prisma.logs.findMany({
+  getAllLogs: protectedProcedure.query(async ({ctx}) => {
+    const logs = await ctx.prisma.logs.findMany({
       include: {
         profile: {
           select: {
@@ -23,13 +24,19 @@ export const logsRouter = createTRPCRouter({
     return logs;
   }),
 
-  getLogsByProfileId: protectedProcedure.input(z.object({id: z.string()})).query(({ctx, input}) => {
-    const logs = ctx.prisma.logs.findMany({
+  getAllByProfileId: protectedProcedure.input(z.object({profileId: z.string()})).query(async ({ctx, input}) => {
+    const logs = await ctx.prisma.logs.findMany({
       where: {
-        profileId: input.id,
+        profileId: input.profileId,
       },
       include: {
-        project: true,
+        profile: {
+          select: {
+            id: true,
+            firstName: true,
+            lastName: true,
+          },
+        },
       },
       orderBy: {
         createdAt: "desc",

@@ -2,11 +2,13 @@ import {createTRPCRouter, protectedProcedure} from "~/server/api/trpc";
 import {TRPCError} from "@trpc/server";
 
 import {z} from "zod";
-import {NewProjectSchema} from "~/pages/admin/dashboard/projects";
+
+import {NewProjectSchema} from "~/components/new-project-form";
+import {createProjectLog} from "~/lib/logger";
 
 export const projectRouter = createTRPCRouter({
-  getAll: protectedProcedure.query(({ctx}) => {
-    const projects = ctx.prisma.project.findMany({
+  getAllWithMembers: protectedProcedure.query(async ({ctx}) => {
+    const projects = await ctx.prisma.project.findMany({
       include: {
         members: {
           select: {
@@ -16,16 +18,27 @@ export const projectRouter = createTRPCRouter({
               select: {
                 firstName: true,
                 lastName: true,
+                phone: true,
                 user: {
                   select: {
-                    email: true,
                     image: true,
                   },
                 },
               },
             },
           },
+          take: 10, // ??
         },
+        address: true,
+      },
+    });
+
+    return projects;
+  }),
+
+  getAll: protectedProcedure.query(async ({ctx}) => {
+    const projects = await ctx.prisma.project.findMany({
+      include: {
         address: true,
       },
     });
@@ -77,6 +90,16 @@ export const projectRouter = createTRPCRouter({
             country: input.address.country,
           },
         },
+      },
+    });
+
+    await createProjectLog(ctx.prisma, {
+      message: `Project ${project.name} created`,
+      type: "PROJECT",
+      action: "CREATE",
+      projectId: project.id,
+      meta: {
+        details: `Project ${project.name} created by Admin: ${ctx.session.user.id}`,
       },
     });
 

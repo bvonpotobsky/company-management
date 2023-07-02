@@ -3,7 +3,7 @@ import {useMounted} from "~/hooks/use-mounted";
 import {Button} from "./ui/button";
 import {Moon, Sun} from "lucide-react";
 
-const ThemeToggler = () => {
+const ThemeToggler: React.FC = () => {
   const {theme, setTheme} = useTheme();
 
   const mounted = useMounted();

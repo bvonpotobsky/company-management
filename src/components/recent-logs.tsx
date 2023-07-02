@@ -6,12 +6,15 @@ import {api} from "~/utils/api";
 const RecentLogs = () => {
   const {data: logs, isLoading} = api.logs.getAllLogs.useQuery();
 
+  console.log({logs});
+
   return (
     <section className="w-full space-y-8">
       {isLoading && (
-        <section className="w-full space-y-8">
+        <section className="w-full">
           <div>
             <p>Is loading logs</p>
+            {/* Add loading components */}
           </div>
         </section>
       )}
@@ -21,14 +24,12 @@ const RecentLogs = () => {
           <div className="flex items-center" key={log.id}>
             <div className="flex space-x-2 space-y-1">
               <Badge
-                className="rounded-sm uppercase"
+                className="rounded-sm text-[10px] uppercase"
                 variant={log.action === "CREATE" ? "info" : log.action === "UPDATE" ? "warning" : "destructive"}
               >
-                {log.type} {log.action}
+                {log.action}
               </Badge>
-              <p className="text-sm font-medium capitalize leading-none">
-                {log.profile?.firstName} {log.profile?.lastName}
-              </p>
+              <p className="text-sm font-medium leading-none">{log.message}</p>
             </div>
 
             <div className="ml-auto flex flex-col text-right text-xs text-muted-foreground sm:flex-row">
