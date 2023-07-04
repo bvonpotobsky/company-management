@@ -40,7 +40,7 @@ const ProjectIdPage: NextPage<ServerSideProps> = ({id}) => {
     <AdminLayout>
       <section className="w-full">
         <div className="flex w-full items-center justify-between">
-          <GoBackURL url="/admin/dashboard/projects" />
+          <GoBackURL href="/admin/dashboard/projects" />
           <AddMemberToProjectForm
             projectId={id}
             trigger={<button className={buttonVariants({variant: "outline"})}>Add member</button>}

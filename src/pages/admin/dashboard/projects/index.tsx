@@ -12,6 +12,7 @@ import NewProjectForm from "~/components/new-project-form";
 import LoadingInvoices from "~/components/loading/loading.invoices";
 
 import AdminLayout from "~/components/layout.admin";
+import GoBackURL from "~/components/go-back-url";
 
 const ProjectsPage: NextPage = () => {
   const {data: projects, isLoading} = api.project.getAllWithMembers.useQuery();
@@ -25,12 +26,7 @@ const ProjectsPage: NextPage = () => {
       </Head>
       <AdminLayout>
         <section className="flex items-center justify-between">
-          <Link
-            href="/admin/dashboard"
-            className={buttonVariants({variant: "ghost", className: "flex items-center font-bold"})}
-          >
-            <ChevronLeft className="mr-1" size={20} /> Go back
-          </Link>
+          <GoBackURL href="/admin/dashboard" />
           <NewProjectForm />
         </section>
 

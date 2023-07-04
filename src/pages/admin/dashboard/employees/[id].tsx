@@ -25,6 +25,7 @@ import LoadingProfile from "~/components/loading/loading.profile";
 
 import {generateSSGHelper} from "~/server/helpers/ssgHelper";
 import {api, type RouterOutputs} from "~/utils/api";
+import GoBackURL from "~/components/go-back-url";
 
 export const getServerSideProps = async (context: GetServerSidePropsContext) => {
   const ssg = generateSSGHelper();
@@ -54,12 +55,13 @@ type ServerSideProps = InferGetServerSidePropsType<typeof getServerSideProps>;
 const EmployeeIdPage: NextPage<ServerSideProps> = ({id}) => {
   const {data: employee, isLoading} = api.employee.getByProfileId.useQuery({id});
 
-  const isVerified = (employee && employee.user.verified) ?? false;
+  const isVerified = employee && employee.user.verified ? true : false;
+  // const isVerified = (employee && employee.user.verified) ?? false;
 
   return (
     <AdminLayout>
       <section className="w-full">
-        {employee && !isVerified && (
+        {!isVerified && (
           <Alert variant="warning" className="mb-3 rounded-sm">
             <AlertTitle className="font-bold">Unverified employee</AlertTitle>
             <AlertDescription>
@@ -69,14 +71,9 @@ const EmployeeIdPage: NextPage<ServerSideProps> = ({id}) => {
         )}
 
         <div className="flex w-full items-center justify-between">
-          <Link
-            href="/admin/dashboard/employees"
-            className={buttonVariants({variant: "ghost", className: "flex items-center font-bold"})}
-          >
-            <ChevronLeft className="mr-1" size={20} /> Go back
-          </Link>
+          <GoBackURL href="/admin/dashboard/employees" />
           {employee && !isVerified && <VerifyEmployeeAlert profileId={employee.id} />}
-          {employee && isVerified && (
+          {isVerified && (
             <Badge variant="success" className="rounded-sm py-1 text-base">
               Verified
             </Badge>

@@ -4,12 +4,12 @@ import Link from "next/link";
 
 // ToDo: Learn to create type with literal string
 type GoBackURLProps = {
-  url: `/admin/${string}` | `/employee/${string}`;
+  href: `/admin/${string}` | `/employee/${string}`;
 };
 
-const GoBackURL = ({url}: GoBackURLProps) => {
+const GoBackURL = ({href}: GoBackURLProps) => {
   return (
-    <Link href={url} className={buttonVariants({variant: "ghost", className: "flex items-center font-bold"})}>
+    <Link href={href} className={buttonVariants({variant: "ghost", className: "flex items-center font-bold"})}>
       <ChevronLeft className="mr-1" size={20} /> Go back
     </Link>
   );

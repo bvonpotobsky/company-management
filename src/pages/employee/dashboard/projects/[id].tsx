@@ -14,6 +14,7 @@ import EmployeeLayout from "~/components/layout.employee";
 
 import {generateSSGHelper} from "~/server/helpers/ssgHelper";
 import {api} from "~/utils/api";
+import GoBackURL from "~/components/go-back-url";
 
 export const getServerSideProps = async (context: GetServerSidePropsContext) => {
   const ssg = generateSSGHelper();
@@ -80,13 +81,7 @@ const ProjectIdPage: NextPage<ServerSideProps> = ({id}) => {
     <EmployeeLayout>
       <section className="w-full">
         <div className="mb-2 flex w-full items-center justify-between">
-          <Link
-            href="/employee/dashboard"
-            className={buttonVariants({variant: "ghost", className: "flex items-center font-bold"})}
-          >
-            <ChevronLeft className="mr-1" size={20} /> Go back
-          </Link>
-
+          <GoBackURL href="/employee/dashboard" />
           <h1 className="text-2xl font-bold">{project?.name}</h1>
         </div>
 
