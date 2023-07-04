@@ -2,8 +2,6 @@ import {useState} from "react";
 import Link from "next/link";
 import {format} from "date-fns";
 
-import type {Profile, User} from "@prisma/client";
-
 import {
   type ColumnDef,
   flexRender,
@@ -24,6 +22,8 @@ import {Checkbox} from "~/components/ui/checkbox";
 import {ArrowUpDown} from "lucide-react";
 import {Badge} from "./ui/badge";
 
+import type {RouterOutputs} from "~/utils/api";
+
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
@@ -31,7 +31,7 @@ interface DataTableProps<TData, TValue> {
 
 // This type is used to define the shape of our data.
 // You can use a Zod schema here if you want.
-type Employee = Profile;
+type Employee = RouterOutputs["employee"]["getAll"][number];
 
 export const columns: ColumnDef<Employee>[] = [
   // I want to be able to click the row and redirtect to /admin/dashboard/invoices/[id]
@@ -77,7 +77,7 @@ export const columns: ColumnDef<Employee>[] = [
     accessorKey: "isVerified",
     header: () => <p className="">Status</p>,
     cell: ({row}) => {
-      const isVerified = row.original.isVerified;
+      const isVerified = row.original.user.verified;
 
       return (
         <Badge variant={isVerified ? "success" : "warning"} className="rounded-sm p-1 capitalize">

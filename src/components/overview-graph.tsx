@@ -51,7 +51,7 @@ const data = [
   },
 ];
 
-export function Overview() {
+const Overview: React.FC = () => {
   return (
     <ResponsiveContainer width="100%" height={350}>
       <BarChart data={data}>
@@ -67,4 +67,6 @@ export function Overview() {
       </BarChart>
     </ResponsiveContainer>
   );
-}
+};
+
+export default Overview;

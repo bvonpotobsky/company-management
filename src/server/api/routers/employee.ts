@@ -11,6 +11,14 @@ export const employeeRouter = createTRPCRouter({
           role: "EMPLOYEE",
         },
       },
+      include: {
+        user: {
+          select: {
+            verified: true,
+            image: true,
+          },
+        },
+      },
     });
 
     return employees;
@@ -32,12 +40,19 @@ export const employeeRouter = createTRPCRouter({
             },
           },
         },
+        include: {
+          user: {
+            select: {
+              verified: true,
+            },
+          },
+        },
       });
 
       return employees;
     }),
 
-  getById: protectedProcedure.input(z.object({id: z.string()})).query(async ({ctx, input}) => {
+  getByProfileId: protectedProcedure.input(z.object({id: z.string()})).query(async ({ctx, input}) => {
     const employee = await ctx.prisma.profile.findUnique({
       where: {
         id: input.id,
@@ -48,6 +63,7 @@ export const employeeRouter = createTRPCRouter({
             image: true,
             email: true,
             role: true,
+            verified: true,
           },
         },
         address: true,

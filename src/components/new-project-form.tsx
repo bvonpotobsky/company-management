@@ -53,7 +53,7 @@ const defaultValues: Partial<ProjectFormValues> = {
   },
 };
 
-const NewProjectForm = () => {
+const NewProjectForm: React.FC = () => {
   const ctx = api.useContext();
 
   const {mutate} = api.project.create.useMutation();

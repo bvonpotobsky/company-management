@@ -11,7 +11,7 @@ import NavbarMobile from "./navbar-bottom.mobile";
 
 import {ROUTES} from "~/lib/constants";
 
-const EmployeeLayout = ({children}: {children: ReactNode}) => {
+const EmployeeLayout: React.FC<{children: ReactNode}> = ({children}) => {
   const windowSize = useWindowSize();
 
   return (

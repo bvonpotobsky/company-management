@@ -35,7 +35,7 @@ export const NewProfileFormSchema = z.object({
 
 type ProfileFormValues = z.infer<typeof NewProfileFormSchema>;
 
-const NewProfileForm = () => {
+const NewProfileForm: React.FC = () => {
   const router = useRouter();
   const {data: session} = useSession();
 
@@ -76,7 +76,6 @@ const NewProfileForm = () => {
       },
       {
         onSuccess: () => {
-          form.reset();
           void router.push("/admin/waiting-for-approval");
           return;
         },
@@ -256,7 +255,6 @@ const NewProfileForm = () => {
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
-                  {/* <SelectItem value="argentina">Argentina</SelectItem> */}
                   {COUNTRIES.map((country) => (
                     <SelectItem key={country.id} value={country.id}>
                       {country.name}
@@ -264,19 +262,17 @@ const NewProfileForm = () => {
                   ))}
                 </SelectContent>
               </Select>
-
               <FormMessage />
             </FormItem>
           )}
         />
 
         <Button disabled={isUpdatingProfile} size="sm" asChild className="cursor-pointer">
-          <input type="submit" value={!isUpdatingProfile ? "Update profile" : "Saving changes..."} />
+          <input type="submit" value={isUpdatingProfile ? "Saving changes..." : "Update profile"} />
         </Button>
       </form>
     </Form>
   );
 };
 
-
-export default NewProfileForm
+export default NewProfileForm;

@@ -75,14 +75,13 @@ enum UserRole {
 
 // Business models
 model Profile {
-  id         String   @id @default(cuid())
-  firstName  String
-  lastName   String
-  phone      String
-  dob        DateTime
-  isVerified Boolean  @default(false)
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
+  id        String   @id @default(cuid())
+  firstName String
+  lastName  String
+  phone     String
+  dob       DateTime
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   address   Address @relation(fields: [addressId], references: [id])
   addressId String  @unique
@@ -102,7 +101,6 @@ model Profile {
 model Project {
   id        String        @id @default(cuid())
   name      String
-  // clientId String? // TODO: Make this a relation to a client model
   createdAt DateTime      @default(now())
   updatedAt DateTime      @updatedAt
   startDate DateTime

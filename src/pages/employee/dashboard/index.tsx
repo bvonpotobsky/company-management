@@ -1,27 +1,20 @@
-import type {Metadata} from "next";
 import Link from "next/link";
 
 import {Building, MapPin} from "lucide-react";
 
-import RecentLogs from "~/components/recent-logs";
-import AnalyticsCards from "~/components/ui/analytics-cards";
-import EmployeeLayout from "~/components/layout.employee";
 import {Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle} from "~/components/ui/card";
-
 import {Badge} from "~/components/ui/badge";
 import {Button} from "~/components/ui/button";
 
-import {api} from "~/utils/api";
+import RecentLogs from "~/components/recent-logs";
+import AnalyticsCards from "~/components/ui/analytics-cards";
+import EmployeeLayout from "~/components/layout.employee";
 
-export const metadata: Metadata = {
-  title: "Dashboard",
-  description: "Example dashboard app using the components.",
-};
+import {api} from "~/utils/api";
 
 const DashboardPage = () => {
   const {data: projects} = api.project.getAllByProfileId.useQuery();
-
-  console.debug(projects);
+  // ToDO: Add loading projects state
 
   return (
     <EmployeeLayout>

@@ -13,6 +13,8 @@ import {
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
 
+import AddMemberToProjectForm from "./add-member-to-project-form";
+
 import {Building, MapPin, MoreHorizontal} from "lucide-react";
 
 import {type RouterOutputs} from "~/utils/api";
@@ -42,7 +44,7 @@ const ProjectCard: React.FC<{project: ProjectCardProps}> = ({project}) => {
         >
           {project.status}
         </Badge>
-        <ProjectOptions />
+        <ProjectOptions projectId={project.id} />
       </CardHeader>
 
       <CardContent className="flex flex-col gap-y-2 pt-6">
@@ -77,7 +79,7 @@ const ProjectCard: React.FC<{project: ProjectCardProps}> = ({project}) => {
 
 export default ProjectCard;
 
-const ProjectOptions = () => {
+const ProjectOptions: React.FC<{projectId: string}> = ({projectId}) => {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -88,7 +90,16 @@ const ProjectOptions = () => {
       <DropdownMenuContent side="left" align="start" forceMount>
         <DropdownMenuItem className="cursor-pointer">Edit project</DropdownMenuItem>
         <DropdownMenuSeparator />
-        <DropdownMenuItem className="cursor-pointer">Add member</DropdownMenuItem>
+        <DropdownMenuItem className="cursor-pointer" asChild>
+          <AddMemberToProjectForm
+            projectId={projectId}
+            trigger={
+              <button className="relative flex w-full cursor-pointer select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50">
+                Add member
+              </button>
+            }
+          />
+        </DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuItem className="cursor-pointer text-red-500">Delete project</DropdownMenuItem>
       </DropdownMenuContent>

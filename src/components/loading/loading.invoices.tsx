@@ -1,9 +1,9 @@
 import {Skeleton} from "~/components/ui/skeleton";
 
-const LoadingInvoices = () => {
+const LoadingInvoices: React.FC = () => {
   return (
     <section className="flex w-full flex-col space-y-2 p-2">
-      {Array.from({length: 5}).map((_, i) => (
+      {Array.from({length: 4}).map((_, i) => (
         <div
           key={i}
           className="flex h-36 w-full flex-col justify-between rounded-lg border p-6"

@@ -7,12 +7,14 @@ import {api} from "~/utils/api";
 import {ChevronLeft} from "lucide-react";
 import {buttonVariants} from "~/components/ui/button";
 
-import AdminLayout from "~/components/layout.admin";
 import ProjectCard from "~/components/project-card";
 import NewProjectForm from "~/components/new-project-form";
+import LoadingInvoices from "~/components/loading/loading.invoices";
+
+import AdminLayout from "~/components/layout.admin";
 
 const ProjectsPage: NextPage = () => {
-  const {data: projects} = api.project.getAllWithMembers.useQuery();
+  const {data: projects, isLoading} = api.project.getAllWithMembers.useQuery();
 
   return (
     <>
@@ -33,6 +35,7 @@ const ProjectsPage: NextPage = () => {
         </section>
 
         <section className="space-y-4">
+          {isLoading && <LoadingInvoices />}
           {projects?.map((project) => (
             <ProjectCard key={project.id} project={project} />
           ))}

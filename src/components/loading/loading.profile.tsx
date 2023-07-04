@@ -1,7 +1,7 @@
-import {Card, CardHeader} from "../ui/card";
+import {Card} from "../ui/card";
 import {Skeleton} from "../ui/skeleton";
 
-const LoadingProfile = () => {
+const LoadingProfile: React.FC = () => {
   return (
     <Card className="flex h-44 w-full flex-col justify-between space-y-2 p-2">
       <section className="flex flex-row items-center justify-between">

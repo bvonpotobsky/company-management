@@ -22,8 +22,6 @@ const EmployeesPage: NextPage = () => {
           {/* ToDO: Button INVITE EMPLOYEE ???? !!!! */}
         </section>
         <section className="flex flex-col space-y-2">
-          {/* {!invoices && <LoadingInvoices />} */}
-          {/* Add global filter */}
           <EmployeesTable columns={columns} data={employees ?? []} />
         </section>
       </AdminLayout>

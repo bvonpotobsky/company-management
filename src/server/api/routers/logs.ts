@@ -23,10 +23,10 @@ export const logsRouter = createTRPCRouter({
     return logs;
   }),
 
-  getAllByProfileId: protectedProcedure.input(z.object({profileId: z.string()})).query(async ({ctx, input}) => {
+  getAllByProfileId: protectedProcedure.input(z.object({id: z.string()})).query(async ({ctx, input}) => {
     const logs = await ctx.prisma.logs.findMany({
       where: {
-        profileId: input.profileId,
+        profileId: input.id,
       },
       include: {
         profile: {

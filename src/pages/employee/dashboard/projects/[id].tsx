@@ -81,7 +81,7 @@ const ProjectIdPage: NextPage<ServerSideProps> = ({id}) => {
       <section className="w-full">
         <div className="mb-2 flex w-full items-center justify-between">
           <Link
-            href="/employee/dashboard/projects"
+            href="/employee/dashboard"
             className={buttonVariants({variant: "ghost", className: "flex items-center font-bold"})}
           >
             <ChevronLeft className="mr-1" size={20} /> Go back
