@@ -93,10 +93,6 @@ export default EmployeeIdPage;
 const RecentActivity: React.FC<{id: string}> = ({id}) => {
   const {data: logs, isLoading} = api.logs.getAllByProfileId.useQuery({profileId: id});
 
-  console.log({id});
-
-  console.log({logs});
-
   return (
     <Card className="w-full">
       <CardHeader className="flex flex-row items-center justify-between">

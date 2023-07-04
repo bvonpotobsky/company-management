@@ -25,12 +25,7 @@ const ShiftTime: React.FC<{startTime: number}> = ({startTime}) => {
       .padStart(2, "0")}`;
   };
 
-  return (
-    <div>
-      <h1>Shift Time</h1>
-      <p>Elapsed Time: {formatTime(elapsedTime)}</p>
-    </div>
-  );
+  return <b> {formatTime(elapsedTime)}</b>;
 };
 
 export default ShiftTime;

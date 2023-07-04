@@ -1,5 +1,4 @@
 import Link from "next/link";
-import {format} from "date-fns";
 import {getNameInitials} from "~/lib/utils";
 
 import {Avatar, AvatarFallback, AvatarImage} from "./ui/avatar";

@@ -6,8 +6,6 @@ import {api} from "~/utils/api";
 const RecentLogs = () => {
   const {data: logs, isLoading} = api.logs.getAllLogs.useQuery();
 
-  console.log({logs});
-
   return (
     <section className="w-full space-y-8">
       {isLoading && (

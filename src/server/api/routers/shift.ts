@@ -72,14 +72,25 @@ export const shiftRouter = createTRPCRouter({
   }),
 
   getCurrentShiftByProfileId: protectedProcedure.query(async ({ctx}) => {
+    const profile = await ctx.prisma.profile.findUnique({
+      where: {
+        userId: ctx.session.user.id,
+      },
+    });
+
+    if (!profile) {
+      throw new TRPCError({code: "NOT_FOUND", message: "User not found"});
+    }
+
     const shift = await ctx.prisma.shift.findFirst({
       where: {
-        profileId: ctx.session.user.id,
+        profileId: profile.id,
         end: null,
       },
     });
 
     if (!shift) {
+      // This is not an error, just means the user is not clocked in
       return null;
     }
 

@@ -40,6 +40,7 @@ export default AdminLayout;
 
 // ToDo: Make logo or something. Name???
 import {Acme} from "next/font/google";
+import {useSession} from "next-auth/react";
 
 const font = Acme({
   weight: "400",

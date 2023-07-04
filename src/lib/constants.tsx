@@ -1,14 +1,4 @@
-import {
-  Building,
-  Group,
-  LayoutDashboard,
-  Paperclip,
-  PersonStanding,
-  Receipt,
-  ReceiptIcon,
-  User2,
-  Users,
-} from "lucide-react";
+import {Building, LayoutDashboard, PersonStanding, Receipt, Users} from "lucide-react";
 
 export type Route = (typeof ROUTES)[number];
 

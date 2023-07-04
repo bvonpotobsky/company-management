@@ -154,7 +154,6 @@ export function DataTable<TData, TValue>({columns, data}: DataTableProps<TData, 
           <TableBody>
             {table.getRowModel().rows?.length ? (
               table.getRowModel().rows.map((row) => {
-                console.log(`row`, row.getValue("id"));
                 return (
                   <TableRow key={row.id} data-state={row.getIsSelected() && "selected"}>
                     {row.getVisibleCells().map((cell) => (

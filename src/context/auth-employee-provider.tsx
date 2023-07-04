@@ -2,7 +2,7 @@ import {type ReactNode} from "react";
 import {useRouter} from "next/router";
 import {useSession} from "next-auth/react";
 
-export const AdminAuthProvider: React.FC<{children: ReactNode}> = ({children}) => {
+export const EmployeeAuthProvider: React.FC<{children: ReactNode}> = ({children}) => {
   const router = useRouter();
 
   const {data: session, status} = useSession();
@@ -31,7 +31,7 @@ export const AdminAuthProvider: React.FC<{children: ReactNode}> = ({children}) =
     return null;
   }
 
-  if (session && session.user.role !== "ADMIN") {
+  if (session && session.user.role !== "EMPLOYEE") {
     void router.push(`/${session.user.role.toLowerCase()}/dashboard`); // ToDO: Look after the best way to handle this
     return null;
   }

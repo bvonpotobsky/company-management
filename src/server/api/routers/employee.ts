@@ -1,12 +1,15 @@
 import {createTRPCRouter, protectedProcedure} from "~/server/api/trpc";
 import {TRPCError} from "@trpc/server";
+
 import {z} from "zod";
 
 export const employeeRouter = createTRPCRouter({
   getAll: protectedProcedure.query(async ({ctx}) => {
     const employees = await ctx.prisma.profile.findMany({
       where: {
-        role: "EMPLOYEE",
+        user: {
+          role: "EMPLOYEE",
+        },
       },
     });
 
@@ -18,7 +21,9 @@ export const employeeRouter = createTRPCRouter({
     .query(async ({ctx, input}) => {
       const employees = await ctx.prisma.profile.findMany({
         where: {
-          role: "EMPLOYEE",
+          user: {
+            role: "EMPLOYEE",
+          },
           NOT: {
             projectMember: {
               some: {
@@ -42,6 +47,7 @@ export const employeeRouter = createTRPCRouter({
           select: {
             image: true,
             email: true,
+            role: true,
           },
         },
         address: true,

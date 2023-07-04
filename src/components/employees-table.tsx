@@ -2,7 +2,7 @@ import {useState} from "react";
 import Link from "next/link";
 import {format} from "date-fns";
 
-import type {Profile} from "@prisma/client";
+import type {Profile, User} from "@prisma/client";
 
 import {
   type ColumnDef,

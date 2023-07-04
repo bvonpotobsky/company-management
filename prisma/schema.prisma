@@ -53,15 +53,20 @@ model User {
   email         String?   @unique
   emailVerified DateTime?
   image         String?
+  role          UserRole  @default(EMPLOYEE)
+  verified      Boolean   @default(false)
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
   accounts      Account[]
   sessions      Session[]
 
-  profile Profile?
+  profile   Profile?
+  profileId String?  @unique
+
+  @@index([profileId])
 }
 
-enum ProfileRole {
+enum UserRole {
   ADMIN
   MANAGER
   SUPERVISOR
@@ -70,28 +75,25 @@ enum ProfileRole {
 
 // Business models
 model Profile {
-  id         String      @id @default(cuid())
+  id         String   @id @default(cuid())
   firstName  String
   lastName   String
   phone      String
-  createdAt  DateTime    @default(now())
-  updatedAt  DateTime    @updatedAt
   dob        DateTime
-  role       ProfileRole @default(EMPLOYEE)
-  isVerified Boolean     @default(false)
+  isVerified Boolean  @default(false)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
 
   address   Address @relation(fields: [addressId], references: [id])
   addressId String  @unique
 
-  bankAccount BankAccount[]
-
+  bankAccount   BankAccount[]
   projectMember ProjectMember[]
   shift         Shift[]
   invoices      Invoices[]
   logs          Logs[]
 
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
-
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId String @unique
 
   @@index([userId])
@@ -130,10 +132,10 @@ enum ProjectRole {
 
 model ProjectMember {
   id   String      @id @default(cuid())
-  role ProjectRole
+  role ProjectRole @default(EMPLOYEE)
 
   profileId String
-  profile   Profile @relation(fields: [profileId], references: [userId])
+  profile   Profile @relation(fields: [profileId], references: [id])
   projectId String
   project   Project @relation(fields: [projectId], references: [id])
 
@@ -152,7 +154,7 @@ model Shift {
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
 
-  profile   Profile @relation(fields: [profileId], references: [userId])
+  profile   Profile @relation(fields: [profileId], references: [id])
   profileId String
 
   project   Project @relation(fields: [projectId], references: [id])
@@ -178,7 +180,7 @@ model Invoices {
   amount    Float
   status    InvoiceStatus
 
-  profile   Profile @relation(fields: [profileId], references: [userId])
+  profile   Profile @relation(fields: [profileId], references: [id])
   profileId String
 
   @@index([profileId])
@@ -192,7 +194,7 @@ model BankAccount {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  profile   Profile @relation(fields: [profileId], references: [userId])
+  profile   Profile @relation(fields: [profileId], references: [id])
   profileId String  @unique
 
   @@index([profileId])
@@ -221,11 +223,14 @@ model Logs {
   message   String
   meta      Json
 
-  profile   Profile? @relation(fields: [profileId], references: [userId])
-  profileId String?  @unique
+  profile   Profile? @relation(fields: [profileId], references: [id])
+  profileId String?
 
   project   Project? @relation(fields: [projectId], references: [id])
-  projectId String?  @unique
+  projectId String?
+
+  @@index([profileId])
+  @@index([projectId])
 }
 
 enum LogType {

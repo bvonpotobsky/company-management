@@ -105,4 +105,38 @@ export const projectRouter = createTRPCRouter({
 
     return project;
   }),
+
+  getAllByProfileId: protectedProcedure.query(async ({ctx}) => {
+    const user = await ctx.prisma.user.findUnique({
+      where: {
+        id: ctx.session.user.id,
+      },
+      include: {
+        profile: {
+          select: {
+            id: true,
+          },
+        },
+      },
+    });
+
+    if (!user || !user.profile) {
+      throw new TRPCError({code: "NOT_FOUND", message: "User not found."});
+    }
+
+    const projects = await ctx.prisma.project.findMany({
+      where: {
+        members: {
+          some: {
+            profileId: user.profile.id,
+          },
+        },
+      },
+      include: {
+        address: true,
+      },
+    });
+
+    return projects;
+  }),
 });

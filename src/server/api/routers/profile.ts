@@ -38,7 +38,6 @@ export const profileRouter = createTRPCRouter({
         lastName: input.lastName,
         phone: input.phone,
         dob: input.dob,
-        role: "EMPLOYEE",
         address: {
           create: {
             street: input.street,
@@ -60,6 +59,15 @@ export const profileRouter = createTRPCRouter({
       throw new TRPCError({code: "INTERNAL_SERVER_ERROR", message: "Something went wrong."});
     }
 
+    await ctx.prisma.user.update({
+      where: {
+        id: ctx.session.user.id,
+      },
+      data: {
+        profileId: profile.id,
+      },
+    });
+
     await createProfileLog(ctx.prisma, {
       profileId: profile.id,
       type: "PROFILE",
@@ -70,7 +78,7 @@ export const profileRouter = createTRPCRouter({
       },
     });
 
-    return user;
+    return profile;
   }),
 
   verifyProfile: protectedProcedure.input(z.object({profileId: z.string()})).mutation(async ({ctx, input}) => {
@@ -80,6 +88,11 @@ export const profileRouter = createTRPCRouter({
       },
       data: {
         isVerified: true,
+        user: {
+          update: {
+            verified: true,
+          },
+        },
       },
     });
 

@@ -1,9 +1,13 @@
-import {PrismaAdapter} from "@next-auth/prisma-adapter";
-import {type GetServerSidePropsContext} from "next";
-import {getServerSession, type NextAuthOptions, type DefaultSession} from "next-auth";
-import GoogleProvider from "next-auth/providers/google";
 import {env} from "~/env.mjs";
 import {prisma} from "~/server/db";
+
+import {PrismaAdapter} from "@next-auth/prisma-adapter";
+import GoogleProvider from "next-auth/providers/google";
+
+import {type GetServerSidePropsContext} from "next";
+import {getServerSession, type NextAuthOptions, type DefaultSession} from "next-auth";
+
+import type {Profile, UserRole} from "@prisma/client";
 
 /**
  * Module augmentation for `next-auth` types. Allows us to add custom properties to the `session`
@@ -16,14 +20,19 @@ declare module "next-auth" {
     user: {
       id: string;
       // ...other properties
-      // role: ProfileRole;
+      role: UserRole;
+      hasProfile: boolean;
+      verified: boolean;
+      profileId?: Profile["id"];
     } & DefaultSession["user"];
   }
 
-  // interface User {
-  //   // ...other properties
-  //   role: ProfileRole;
-  // }
+  interface User {
+    // ...other properties
+    role: UserRole;
+    verified: boolean;
+    profileId?: Profile["id"];
+  }
 }
 
 /**
@@ -38,6 +47,9 @@ export const authOptions: NextAuthOptions = {
       user: {
         ...session.user,
         id: user.id,
+        role: user.role,
+        verified: user.verified,
+        profileId: user.profileId,
       },
     }),
   },

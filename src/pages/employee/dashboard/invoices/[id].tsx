@@ -1,9 +1,12 @@
-import type {NextPage} from "next";
+import type {GetServerSidePropsContext, InferGetServerSidePropsType, NextPage} from "next";
 import Link from "next/link";
 
 import {Button} from "~/components/ui/button";
 import {ChevronLeft} from "lucide-react";
 
+import LayoutEmployee from "~/components/layout.employee";
+
+import {generateSSGHelper} from "~/server/helpers/ssgHelper";
 import AdminLayout from "~/components/layout.admin";
 
 // import InvoicePDF from "~/components/pdf/invoice-pdf";

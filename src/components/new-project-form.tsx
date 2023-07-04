@@ -33,10 +33,25 @@ export const NewProjectSchema = z.object({
     street: z.string(),
     city: z.string(),
     state: z.string(),
-    zip: z.number(),
+    zip: z.coerce.number(),
     country: z.string(),
   }),
 });
+
+type ProjectFormValues = z.infer<typeof NewProjectSchema>;
+
+const defaultValues: Partial<ProjectFormValues> = {
+  name: "",
+  startDate: new Date(Date.now()),
+  status: "ACTIVE",
+  address: {
+    street: "",
+    city: "",
+    state: "",
+    country: "",
+    zip: 2026,
+  },
+};
 
 const NewProjectForm = () => {
   const ctx = api.useContext();
@@ -45,7 +60,7 @@ const NewProjectForm = () => {
 
   const form = useForm<z.infer<typeof NewProjectSchema>>({
     resolver: zodResolver(NewProjectSchema),
-    defaultValues: {},
+    defaultValues,
   });
 
   const onSubmit = (values: z.infer<typeof NewProjectSchema>) => {
