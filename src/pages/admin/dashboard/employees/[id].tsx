@@ -1,9 +1,7 @@
 import type {GetServerSidePropsContext, InferGetServerSidePropsType, NextPage} from "next";
-import Link from "next/link";
-import {format} from "date-fns";
 import {useToast} from "~/components/ui/use-toast";
 
-import {CheckCircle, ChevronLeft, Mail, MapPin, Phone} from "lucide-react";
+import {CheckCircle, Mail, MapPin, Phone} from "lucide-react";
 
 import {Alert, AlertDescription, AlertTitle} from "~/components/ui/alert";
 import {
@@ -17,15 +15,16 @@ import {
   AlertDialogTrigger,
 } from "~/components/ui/alert-dialog";
 import {Badge} from "~/components/ui/badge";
-import {Button, buttonVariants} from "~/components/ui/button";
+import {Button} from "~/components/ui/button";
 import {Card, CardHeader, CardContent, CardTitle, CardDescription} from "~/components/ui/card";
 
 import AdminLayout from "~/components/layout.admin";
 import LoadingProfile from "~/components/loading/loading.profile";
+import GoBackURL from "~/components/go-back-url";
+import RecentLogs from "~/components/recent-logs";
 
 import {generateSSGHelper} from "~/server/helpers/ssgHelper";
 import {api, type RouterOutputs} from "~/utils/api";
-import GoBackURL from "~/components/go-back-url";
 
 export const getServerSideProps = async (context: GetServerSidePropsContext) => {
   const ssg = generateSSGHelper();
@@ -54,6 +53,7 @@ type ServerSideProps = InferGetServerSidePropsType<typeof getServerSideProps>;
 
 const EmployeeIdPage: NextPage<ServerSideProps> = ({id}) => {
   const {data: employee, isLoading} = api.employee.getByProfileId.useQuery({id});
+  const {data: logs} = api.logs.getAllByProfileId.useQuery({id});
 
   const isVerified = employee && employee.user.verified ? true : false;
   // const isVerified = (employee && employee.user.verified) ?? false;
@@ -82,7 +82,7 @@ const EmployeeIdPage: NextPage<ServerSideProps> = ({id}) => {
       </section>
       {isLoading && <LoadingProfile />} {/* Streaming or Suspense */}
       {!isLoading && employee && <EmployeeCard employee={employee} />}
-      <RecentActivity id={id} />
+      {logs && <RecentLogs logs={logs} />}
     </AdminLayout>
   );
 };
@@ -117,44 +117,6 @@ const EmployeeCard: React.FC<{employee: Employee}> = ({employee}) => {
         <CardDescription>
           {employee.address.street}, {employee.address.city}, {employee.address.state}
         </CardDescription>
-      </CardContent>
-    </Card>
-  );
-};
-
-const RecentActivity: React.FC<{id: string}> = ({id}) => {
-  const {data: logs, isLoading} = api.logs.getAllByProfileId.useQuery({id});
-
-  return (
-    <Card className="w-full">
-      <CardHeader className="flex flex-row items-center justify-between">
-        <CardTitle className="font-bold">Recent Activity</CardTitle>
-        <Link className={buttonVariants({variant: "outline"})} href={`/admin/dashboard/employees/${id}/logs`}>
-          View all
-        </Link>
-      </CardHeader>
-
-      <CardContent>
-        {isLoading && <p className="p-4">Is loading logs</p>}
-
-        {logs?.map((log) => (
-          <section className="flex items-center space-y-4" key={log.id}>
-            <div className="flex items-center space-x-2">
-              <Badge
-                className="rounded-sm uppercase"
-                variant={log.action === "CREATE" ? "info" : log.action === "UPDATE" ? "warning" : "destructive"}
-              >
-                {log.type} {log.action}
-              </Badge>
-            </div>
-
-            <div className="ml-auto flex flex-row text-right text-xs text-muted-foreground">
-              <p>{format(log.updatedAt, "HH:mmaaa")}</p>
-              <span className="mx-1">·</span>
-              <p>{format(log.updatedAt, "dd MMM")}</p>
-            </div>
-          </section>
-        ))}
       </CardContent>
     </Card>
   );

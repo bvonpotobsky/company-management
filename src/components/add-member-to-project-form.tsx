@@ -1,4 +1,4 @@
-import type {ReactNode} from "react";
+import {useState, type ReactNode} from "react";
 import {z} from "zod";
 import {useToast} from "~/components/ui/use-toast";
 
@@ -29,6 +29,8 @@ export const AddMemberToProjectSchema = z.object({
 });
 
 const AddMemberToProjectForm: React.FC<{projectId: string; trigger: ReactNode}> = ({projectId, trigger}) => {
+  const [open, setOpen] = useState<boolean>(false);
+
   const ctx = api.useContext();
   const {toast} = useToast();
 
@@ -53,6 +55,7 @@ const AddMemberToProjectForm: React.FC<{projectId: string; trigger: ReactNode}> 
           toast({description: "Member added to project"});
           form.reset();
           void ctx.employee.getAllButMembersOfProjectId.invalidate({projectId});
+          void ctx.project.getAllWithMembers.invalidate();
         },
       }
     );

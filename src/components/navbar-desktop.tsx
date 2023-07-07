@@ -4,7 +4,7 @@ import {useRouter} from "next/router";
 import {cn} from "~/lib/utils";
 import type {Route} from "~/lib/constants";
 
-const MainNav: React.FC<{className?: string; routes: Route[] & React.HTMLAttributes<HTMLDivElement>}> = ({
+const NavbarDesktop: React.FC<{className?: string; routes: Route[] & React.HTMLAttributes<HTMLDivElement>}> = ({
   className,
   routes,
   ...props
@@ -32,4 +32,4 @@ const MainNav: React.FC<{className?: string; routes: Route[] & React.HTMLAttribu
   );
 };
 
-export default MainNav;
+export default NavbarDesktop;

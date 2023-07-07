@@ -2,6 +2,7 @@ import Link from "next/link";
 import {signOut, useSession} from "next-auth/react";
 
 import {getNameInitials} from "~/lib/utils";
+import type {UserRole} from "@prisma/client";
 
 import {CreditCard, LogOut, PlusCircle, Settings, User} from "lucide-react";
 
@@ -18,8 +19,19 @@ import {
   DropdownMenuTrigger,
 } from "~/components/ui/dropdown-menu";
 
-const UserNav: React.FC = () => {
+const UserNav: React.FC<{role: UserRole}> = ({role}) => {
   const {data: session} = useSession();
+
+  const pathMaker = (r: UserRole) => {
+    const path = {
+      ADMIN: "/admin",
+      EMPLOYEE: "/employee",
+      MANAGER: "/manager",
+      SUPERVISOR: "/supervisor",
+    }[r];
+
+    return path;
+  };
 
   return (
     <DropdownMenu>
@@ -44,14 +56,15 @@ const UserNav: React.FC = () => {
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
           <DropdownMenuItem>
-            <Link href="/admin/profile">
+            {/* <Link href="/admin/profile"> */}
+            <Link href={`${pathMaker(role)}/profile`}>
               <User className="mr-2 h-4 w-4" />
             </Link>
-            <Link href="/admin/profile" className="w-full">
+            <Link href={`${pathMaker(role)}/profile`} className="w-full">
               Profile
             </Link>
             <DropdownMenuShortcut>
-              <Link href="/admin/profile">⇧⌘P</Link>
+              <Link href={`${pathMaker(role)}/profile`}>⇧⌘P</Link>
             </DropdownMenuShortcut>
           </DropdownMenuItem>
           <DropdownMenuItem>

@@ -1,10 +1,10 @@
 import Link from "next/link";
 import type {Route} from "~/lib/constants";
 
-const NavbarMobile: React.FC<{routes: Route[]}> = ({routes}) => {
+const NavbarMobile: React.FC<{routes: Route[] & React.HTMLAttributes<HTMLDivElement>}> = ({routes, ...props}) => {
   return (
     <div className="fixed bottom-0 left-0 z-40 h-14 w-full opacity-95 dark:bg-black">
-      <div className="mx-auto grid h-full max-w-lg grid-cols-5 font-medium">
+      <nav className="mx-auto grid h-full max-w-lg grid-flow-col font-medium" {...props}>
         {routes?.map((route) => (
           <Link
             key={route.href}
@@ -14,7 +14,7 @@ const NavbarMobile: React.FC<{routes: Route[]}> = ({routes}) => {
             {route.icon}
           </Link>
         ))}
-      </div>
+      </nav>
     </div>
   );
 };

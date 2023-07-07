@@ -45,4 +45,27 @@ export const logsRouter = createTRPCRouter({
 
     return logs;
   }),
+
+  getAllCurrentProfile: protectedProcedure.query(async ({ctx}) => {
+    const logs = await ctx.prisma.logs.findMany({
+      where: {
+        profileId: ctx.session.user.profileId,
+      },
+      include: {
+        profile: {
+          select: {
+            id: true,
+            firstName: true,
+            lastName: true,
+          },
+        },
+      },
+      orderBy: {
+        createdAt: "desc",
+      },
+      take: 10,
+    });
+
+    return logs;
+  }),
 });

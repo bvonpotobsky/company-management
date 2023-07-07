@@ -7,7 +7,7 @@ import {ChevronLeft} from "lucide-react";
 import LayoutEmployee from "~/components/layout.employee";
 
 import {generateSSGHelper} from "~/server/helpers/ssgHelper";
-import AdminLayout from "~/components/layout.admin";
+import EmployeeLayout from "~/components/layout.employee";
 
 // import InvoicePDF from "~/components/pdf/invoice-pdf";
 
@@ -47,7 +47,7 @@ const InvoicesIdPage: NextPage = () => {
   // };
 
   return (
-    <AdminLayout>
+    <EmployeeLayout>
       <section className="w-full p-2">
         <div className="flex w-full items-center justify-between">
           <Button asChild variant="link">
@@ -68,7 +68,7 @@ const InvoicesIdPage: NextPage = () => {
         {/* Streaming or suspense */}
         {/* {isLoading && <LoadingInvoices />} */}
       </section>
-    </AdminLayout>
+    </EmployeeLayout>
   );
 };
 

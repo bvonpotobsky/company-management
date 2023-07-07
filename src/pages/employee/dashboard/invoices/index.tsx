@@ -1,7 +1,7 @@
 import {type NextPage} from "next";
 import Head from "next/head";
 
-import AdminLayout from "~/components/layout.admin";
+import EmployeeLayout from "~/components/layout.employee";
 
 const Invoices: NextPage = () => {
   // const {data: invoices, isLoading: isLoadingInvoices} = api.invoice.getAllCurrentUser.useQuery();
@@ -14,7 +14,7 @@ const Invoices: NextPage = () => {
         <meta name="description" content="Invoices dashboard" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <AdminLayout>
+      <EmployeeLayout>
         <section className="flex items-center justify-between">
           <h3 className="scroll-m-20 text-2xl font-semibold tracking-tight">Invoices</h3>
           {/* <NewInvoiceForm /> */}
@@ -25,7 +25,7 @@ const Invoices: NextPage = () => {
           {/* {!invoices && <LoadingInvoices />} */}
           {/* <DataTable columns={columns} data={invoices ?? []} /> */}
         </section>
-      </AdminLayout>
+      </EmployeeLayout>
     </>
   );
 };

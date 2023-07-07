@@ -1,9 +1,9 @@
 import {type NextPage} from "next";
 import Head from "next/head";
 
-import AdminLayout from "~/components/layout.admin";
+import EmployeeLayout from "~/components/layout.employee";
 
-const AdminProfilePage: NextPage = () => {
+const EmployeeProfilePage: NextPage = () => {
   return (
     <>
       <Head>
@@ -11,13 +11,13 @@ const AdminProfilePage: NextPage = () => {
         <meta name="description" content="Dashboard page" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <AdminLayout>
+      <EmployeeLayout>
         <div className="flex h-full w-full items-center justify-center">
-          <h3>Employees page admin</h3>
+          <h3>Profile page</h3>
         </div>
-      </AdminLayout>
+      </EmployeeLayout>
     </>
   );
 };
 
-export default AdminProfilePage;
+export default EmployeeProfilePage;
