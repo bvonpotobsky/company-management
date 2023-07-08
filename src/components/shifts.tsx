@@ -1,26 +1,38 @@
-import {api} from "~/utils/api";
+import Link from "next/link";
 import {format} from "date-fns";
 import {calculateHoursWorked} from "~/lib/utils";
 
-import {Card, CardContent, CardHeader, CardTitle} from "~/components//ui/card";
+import {Card, CardContent, CardDescription, CardHeader, CardTitle} from "~/components//ui/card";
 import {Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow} from "~/components/ui/table";
 
-const ShiftsContainer: React.FC = () => {
-  const {data: shifts} = api.shift.getLastWeekByCurrentProfile.useQuery();
+import type {Shift} from "@prisma/client";
+type Shifts = Shift & {
+  project: {
+    name: string;
+  };
+};
 
-  const sevenDays = 7 * 24 * 60 * 60 * 1000;
+const Shifts: React.FC<{shifts: Shifts[]}> = ({shifts}) => {
+  const oneweek = 7 * 24 * 60 * 60 * 1000;
 
   return (
     <Card className="col-span-3 border-none">
       <CardHeader className="flex flex-row items-baseline justify-between">
-        <CardTitle className="mb-2">Latest Shifts</CardTitle>
+        <CardTitle className="mb-2">
+          Current week shifts <span className="text-sm font-normal">(last 7 days)</span>
+        </CardTitle>
+        <CardDescription>
+          <Link href="/employee/dashboard/shifts" className="hover:underline">
+            View all shifts
+          </Link>
+        </CardDescription>
       </CardHeader>
       <CardContent>
         <Table>
           <TableCaption>
-            {shifts && shifts.length === 0
-              ? "No shifts found"
-              : `${format(new Date().getTime() - sevenDays, "dd/MM/yyyy")} to ${format(new Date(), "dd/MM/yyyy")}`}
+            <b>
+              {format(new Date(Date.now() - oneweek), "dd/MM/yyyy")} to {format(new Date(), "dd/MM/yyyy")}
+            </b>
           </TableCaption>
           <TableHeader>
             <TableRow>
@@ -36,10 +48,11 @@ const ShiftsContainer: React.FC = () => {
               shifts.map((shift) => (
                 <TableRow key={shift.id}>
                   <TableCell className="font-semibold">{format(shift.date, "dd MMM")}</TableCell>
-                  <TableCell>{format(shift.start, "hh:mm a")}</TableCell>
-                  <TableCell>{shift.end ? format(shift.end, "hh:mm a") : "N/A"}</TableCell>
+                  <TableCell>{format(shift.start, "HH:mm a")}</TableCell>
+                  {/* 24hs */}
+                  <TableCell>{shift.end ? format(shift.end, "HH:mm a") : "N/A"}</TableCell>
                   <TableCell>{shift.end ? calculateHoursWorked(shift.start, shift.end) : "N/A"}</TableCell>
-                  <TableCell className="text-right">{shift.project.name}</TableCell>
+                  <TableCell className="text-right font-semibold">{shift.project.name}</TableCell>
                 </TableRow>
               ))}
           </TableBody>
@@ -49,4 +62,4 @@ const ShiftsContainer: React.FC = () => {
   );
 };
 
-export default ShiftsContainer;
+export default Shifts;

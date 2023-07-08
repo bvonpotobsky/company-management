@@ -25,16 +25,18 @@ const ProjectsPage: NextPage = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <AdminLayout>
-        <section className="flex items-center justify-between">
-          <GoBackURL href="/admin/dashboard" />
-          <NewProjectForm />
-        </section>
+        <section className="relative flex h-full flex-col">
+          <div className="mb-4 flex h-12 w-full items-center justify-between">
+            <GoBackURL href="/admin/dashboard" />
+            <NewProjectForm />
+          </div>
 
-        <section className="space-y-4">
-          {isLoading && <LoadingInvoices />}
-          {projects?.map((project) => (
-            <ProjectCard key={project.id} project={project} />
-          ))}
+          <div className="h-full flex-grow overflow-y-auto">
+            {isLoading && <LoadingInvoices />}
+            {projects?.map((project) => (
+              <ProjectCard key={project.id} project={project} />
+            ))}
+          </div>
         </section>
       </AdminLayout>
     </>

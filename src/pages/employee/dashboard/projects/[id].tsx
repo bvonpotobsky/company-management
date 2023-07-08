@@ -4,7 +4,7 @@ import {format} from "date-fns";
 import {TimerOff, TimerReset} from "lucide-react";
 
 import {Button} from "~/components/ui/button";
-import {Card, CardContent, CardDescription, CardTitle} from "~/components/ui/card";
+import {Card, CardContent, CardDescription, CardHeader, CardTitle} from "~/components/ui/card";
 
 import ClockRealTime from "~/components/clock-real-time";
 import ShiftTime from "~/components/shift-time";
@@ -41,8 +41,6 @@ export const getServerSideProps = async (context: GetServerSidePropsContext) => 
 type ServerSideProps = InferGetServerSidePropsType<typeof getServerSideProps>;
 
 const ProjectIdPage: NextPage<ServerSideProps> = ({id}) => {
-  const ctx = api.useContext();
-
   const {data: project, isLoading} = api.project.getById.useQuery({id});
 
   const {data: currentShift, isLoading: isLoadingCurrentShift} = api.shift.getCurrentShiftByProfileId.useQuery();
@@ -51,6 +49,8 @@ const ProjectIdPage: NextPage<ServerSideProps> = ({id}) => {
   const {mutate: clockOut} = api.shift.profileClockOut.useMutation();
 
   const isEmployeeWorking = currentShift?.start && !isLoadingCurrentShift ? true : false;
+
+  const ctx = api.useContext();
 
   const onClockIn = () => {
     clockIn(
@@ -83,7 +83,6 @@ const ProjectIdPage: NextPage<ServerSideProps> = ({id}) => {
           <GoBackURL href="/employee/dashboard" />
           <h1 className="text-2xl font-bold">{project?.name}</h1>
         </div>
-
         <Card>
           <CardTitle className="pt-4 text-center">
             <ClockRealTime />
@@ -110,8 +109,8 @@ const ProjectIdPage: NextPage<ServerSideProps> = ({id}) => {
           </CardContent>
 
           {currentShift && (
-            <CardContent>
-              <CardTitle className="pb-2">You are currently logged in</CardTitle>
+            <CardHeader className="px-4 pb-4">
+              <CardTitle>You are currently logged in</CardTitle>
               <CardDescription className="flex items-center justify-between">
                 <span>
                   Started at <b>{format(currentShift.start, "HH:mm a")}</b>
@@ -119,7 +118,7 @@ const ProjectIdPage: NextPage<ServerSideProps> = ({id}) => {
 
                 <ShiftTime startTime={currentShift.start.getTime()} />
               </CardDescription>
-            </CardContent>
+            </CardHeader>
           )}
         </Card>
       </section>
@@ -128,3 +127,63 @@ const ProjectIdPage: NextPage<ServerSideProps> = ({id}) => {
 };
 
 export default ProjectIdPage;
+
+const CurrentShift: React.FC = () => {
+  const ctx = api.useContext();
+
+  const {data: currentShift, isLoading: isLoadingCurrentShift} = api.shift.getCurrentShiftByProfileId.useQuery();
+
+  const {mutate: clockIn} = api.shift.profileClockIn.useMutation();
+  const {mutate: clockOut} = api.shift.profileClockOut.useMutation();
+
+  const isEmployeeWorking = currentShift?.start && !isLoadingCurrentShift ? true : false;
+
+  const onClockOut = () => {
+    if (!currentShift) return;
+
+    clockOut(
+      {shiftId: currentShift.id},
+      {
+        onSuccess: () => {
+          void ctx.shift.getCurrentShiftByProfileId.invalidate();
+        },
+      }
+    );
+  };
+
+  return (
+    <Card>
+      <CardTitle className="pt-4 text-center">
+        <ClockRealTime />
+      </CardTitle>
+
+      <CardContent className="flex items-center justify-center space-x-2 p-4">
+        <Button variant="outline" disabled={isEmployeeWorking} className="flex items-center font-semibold">
+          <TimerReset size={20} className="mr-2" /> Clock In
+        </Button>
+        <Button
+          variant="outline"
+          onClick={onClockOut}
+          disabled={!isEmployeeWorking}
+          className="flex items-center font-semibold"
+        >
+          <TimerOff size={20} className="mr-2" />
+          Clock Out
+        </Button>
+      </CardContent>
+
+      {currentShift && (
+        <CardContent className="">
+          <CardTitle className="pb-2">You are currently logged in</CardTitle>
+          <CardDescription className="flex items-center justify-between">
+            <span>
+              Started at <b>{format(currentShift.start, "HH:mm a")}</b>
+            </span>
+
+            <ShiftTime startTime={currentShift.start.getTime()} />
+          </CardDescription>
+        </CardContent>
+      )}
+    </Card>
+  );
+};

@@ -17,7 +17,7 @@ const AdminLayout: React.FC<{children: ReactNode}> = ({children}) => {
 
   return (
     <AdminAuthProvider>
-      <main className="flex h-screen w-full flex-col">
+      <main className="flex h-screen flex-col overflow-hidden">
         <nav className="w-full border-b">
           <div className="flex h-16 items-center px-4">
             <Logo />
@@ -30,7 +30,7 @@ const AdminLayout: React.FC<{children: ReactNode}> = ({children}) => {
           </div>
         </nav>
 
-        <section className="flex-1 space-y-4 p-4 pt-4">{children}</section>
+        <section className="flex-grow overflow-y-auto p-4">{children}</section>
         {windowSize === "mobile" && <NavbarMobile routes={ROUTES_ADMIN} />}
       </main>
     </AdminAuthProvider>

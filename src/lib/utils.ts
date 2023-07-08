@@ -1,3 +1,4 @@
+import {Shift} from "@prisma/client";
 import {type ClassValue, clsx} from "clsx";
 import {twMerge} from "tailwind-merge";
 
@@ -83,8 +84,11 @@ export const getProfileAge = (dob: Date) => {
 export const formatTime = (milliseconds: number) => {
   const minutes = Math.floor(milliseconds / (1000 * 60)) % 60;
   const hours = Math.floor(milliseconds / (1000 * 60 * 60));
+  const seconds = Math.floor(milliseconds / 1000) % 60;
 
-  return `${hours.toString().padStart(2, "0")}:${minutes.toString().padStart(2, "0").toString().padStart(2, "0")}hs`;
+  return `${hours.toString().padStart(2, "0")}:${minutes.toString().padStart(2, "0")}:${seconds
+    .toString()
+    .padStart(2, "0")}`;
 };
 
 export const calculateHoursWorked = (startTime: Date, endTime: Date) => {
