@@ -5,26 +5,22 @@ import {Badge} from "./ui/badge";
 import {Card, CardContent, CardDescription, CardHeader, CardTitle} from "./ui/card";
 
 type Log = RouterOutputs["logs"]["getAllByProfileId"][number] | RouterOutputs["logs"]["getAllLogs"][number];
-
 const RecentLogs: React.FC<{logs: Log[]}> = ({logs}) => {
   return (
-    <Card className="col-span-3">
-      <CardHeader>
+    <Card className="col-span-3 border-none">
+      <CardHeader className="flex flex-row items-baseline justify-between">
         <CardTitle>Recent Activity</CardTitle>
         <CardDescription>
           Updated <span className="font-semibold">3 minutes</span> ago
         </CardDescription>
       </CardHeader>
-      <CardContent>
-        {(logs.length === 0 || !logs) && (
-          <div className="flex flex-col items-center justify-center space-y-2">
-            <p className="text-sm text-gray-500">No recent activity</p>
-          </div>
-        )}
 
+      {!logs && <CardDescription className="mt-5 text-center font-semibold">No recent activity found</CardDescription>}
+
+      <CardContent>
         {logs &&
           logs.map((log) => (
-            <div className="flex items-center" key={log.id}>
+            <div className="my-2 flex items-center space-y-2" key={log.id}>
               <div className="flex space-x-2 space-y-1">
                 <Badge
                   className="rounded-sm text-[10px] uppercase"

@@ -145,12 +145,14 @@ model ProjectMember {
 }
 
 model Shift {
-  id        String    @id @default(cuid())
-  start     DateTime // Normalize server and db time
-  end       DateTime?
-  date      DateTime  @default(now())
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
+  id         String    @id @default(cuid())
+  start      DateTime // Normalize server and db time
+  end        DateTime?
+  breakStart DateTime?
+  breakEnd   DateTime?
+  date       DateTime  @default(now())
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
 
   profile   Profile @relation(fields: [profileId], references: [id])
   profileId String

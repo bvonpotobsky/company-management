@@ -96,4 +96,49 @@ export const shiftRouter = createTRPCRouter({
 
     return shift;
   }),
+
+  getAllByCurrentProfile: protectedProcedure.query(async ({ctx}) => {
+    const shifts = await ctx.prisma.shift.findMany({
+      where: {
+        profileId: ctx.session.user.profileId,
+      },
+      include: {
+        project: {
+          select: {
+            id: true,
+            name: true,
+          },
+        },
+      },
+      orderBy: {
+        date: "desc",
+      },
+    });
+
+    return shifts;
+  }),
+
+  getLastWeekByCurrentProfile: protectedProcedure.query(async ({ctx}) => {
+    const shifts = await ctx.prisma.shift.findMany({
+      where: {
+        profileId: ctx.session.user.profileId,
+        date: {
+          gte: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
+        },
+      },
+      include: {
+        project: {
+          select: {
+            id: true,
+            name: true,
+          },
+        },
+      },
+      orderBy: {
+        date: "desc",
+      },
+    });
+
+    return shifts;
+  }),
 });

@@ -1,6 +1,8 @@
 import {useState} from "react";
-import Link from "next/link";
 import {format} from "date-fns";
+import {formatTime} from "~/lib/utils";
+
+import {ArrowUpDown} from "lucide-react";
 
 import {
   type ColumnDef,
@@ -16,13 +18,9 @@ import {
 import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "~/components/ui/table";
 
 import {Button} from "~/components/ui/button";
-import {Input} from "~/components/ui/input";
-import {Checkbox} from "~/components/ui/checkbox";
-
-import {ArrowUpDown} from "lucide-react";
-import {Badge} from "./ui/badge";
 
 import type {RouterOutputs} from "~/utils/api";
+import {Badge} from "./ui/badge";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -31,63 +29,65 @@ interface DataTableProps<TData, TValue> {
 
 // This type is used to define the shape of our data.
 // You can use a Zod schema here if you want.
-type Employee = RouterOutputs["employee"]["getAll"][number];
+type Shift = RouterOutputs["shift"]["getAllByCurrentProfile"][number];
 
-export const columns: ColumnDef<Employee>[] = [
+export const columns: ColumnDef<Shift>[] = [
   {
-    id: "select",
-    header: ({table}) => (
-      <Checkbox
-        checked={table.getIsAllPageRowsSelected()}
-        onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-        aria-label="Select all"
-      />
-    ),
-    cell: ({row}) => (
-      <Checkbox
-        checked={row.getIsSelected()}
-        onCheckedChange={(value) => row.toggleSelected(!!value)}
-        aria-label="Select row"
-      />
-    ),
-    enableSorting: false,
-    enableHiding: false,
-  },
-  {
-    accessorKey: "firstName",
+    accessorKey: "date",
     header: ({column}) => (
-      <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
-        Name
+      <Button
+        variant="ghost"
+        className="font-bold"
+        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+      >
+        Date
         <ArrowUpDown className="ml-2 h-4 w-4" />
       </Button>
     ),
-    cell: ({row}) => (
-      <Link href={`/admin/dashboard/employees/${row.original.id}`} className="font-semibold capitalize">
-        {row.original.firstName} {row.original.lastName}
-      </Link>
-    ),
+    cell: ({row}) => <p className="ml-4 text-start">{format(row.original.date, "dd MMM")}</p>,
   },
   {
-    accessorKey: "dob",
-    header: () => <p className="">DOB</p>,
-    cell: ({row}) => <p>{format(row.original.dob, "dd/MM/yyyy")}</p>,
+    accessorKey: "start",
+    header: () => <p>Check In</p>,
+    cell: ({row}) => <span>{format(row.original.start, "hh:mm a")}</span>,
   },
   {
-    accessorKey: "isVerified",
-    header: () => <p className="">Status</p>,
+    accessorKey: "end",
+    header: () => <p>Check Out</p>,
     cell: ({row}) => {
-      const isVerified = row.original.user.verified;
+      const date = row.original.end ?? null;
+      return <span>{date ? format(date, "hh:mm a") : "N/A"}</span>;
+    },
+  },
+  {
+    accessorKey: "total",
+    header: () => <p>Total</p>,
+    cell: ({row}) => {
+      const start = row.original.start;
+      const end = row.original.end ?? new Date();
+
+      const diff = Math.abs(end.getTime() - start.getTime());
+      const minutes = Math.floor(diff / 1000 / 60);
+
+      return <span>{formatTime(minutes * 60 * 1000)}</span>;
+    },
+  },
+  {
+    accessorKey: "project",
+    header: () => <p>Project</p>,
+    cell: ({row}) => {
+      const projectName = row.original.project.name;
 
       return (
-        <Badge variant={isVerified ? "success" : "warning"} className="rounded-sm p-1 capitalize">
-          {isVerified ? "At work" : "Waiting"}
+        <Badge variant="outline" className="rounded-sm p-1.5 sm:text-sm">
+          {projectName}
         </Badge>
       );
     },
   },
 ];
 
-export function EmployeesTable<TData, TValue>({columns, data}: DataTableProps<TData, TValue>) {
+export function ShiftTable<TData, TValue>({columns, data}: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [rowSelection, setRowSelection] = useState({});
@@ -111,15 +111,6 @@ export function EmployeesTable<TData, TValue>({columns, data}: DataTableProps<TD
 
   return (
     <section>
-      <div className="flex items-center py-4">
-        <Input
-          placeholder="Filter name..."
-          onChange={(event) => table.getColumn("firstName")?.setFilterValue(event.target.value)}
-          value={(table.getColumn("firstName")?.getFilterValue() as string) ?? ""}
-          className="max-w-sm"
-        />
-      </div>
-
       <div className="rounded-md border">
         <Table>
           <TableHeader>
@@ -127,7 +118,7 @@ export function EmployeesTable<TData, TValue>({columns, data}: DataTableProps<TD
               <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map((header) => {
                   return (
-                    <TableHead key={header.id}>
+                    <TableHead key={header.id} className="font-bold">
                       {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
                     </TableHead>
                   );

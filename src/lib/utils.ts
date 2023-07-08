@@ -79,3 +79,24 @@ export const getProfileAge = (dob: Date) => {
 
   return age;
 };
+
+export const formatTime = (milliseconds: number) => {
+  const minutes = Math.floor(milliseconds / (1000 * 60)) % 60;
+  const hours = Math.floor(milliseconds / (1000 * 60 * 60));
+
+  return `${hours.toString().padStart(2, "0")}:${minutes.toString().padStart(2, "0").toString().padStart(2, "0")}hs`;
+};
+
+export const calculateHoursWorked = (startTime: Date, endTime: Date) => {
+  // Calculate the time difference in milliseconds
+  const timeDiff = endTime.getTime() - startTime.getTime();
+
+  // Convert milliseconds to hours, minutes, and seconds
+  const hours = Math.floor(timeDiff / (1000 * 60 * 60));
+  const minutes = Math.floor((timeDiff % (1000 * 60 * 60)) / (1000 * 60));
+
+  // Format the result as "hh:mm:ss"
+  const formattedTime = `${hours.toString().padStart(2, "0")}:${minutes.toString().padStart(2, "0")}`;
+
+  return formattedTime;
+};

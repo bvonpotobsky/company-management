@@ -9,7 +9,7 @@ const NavbarMobile: React.FC<{routes: Route[] & React.HTMLAttributes<HTMLDivElem
           <Link
             key={route.href}
             href={route.href}
-            className="group inline-flex flex-col items-center justify-center px-5 hover:bg-gray-50 dark:hover:bg-gray-900"
+            className="group inline-flex cursor-pointer flex-col items-center justify-center px-5 hover:bg-gray-50 dark:hover:bg-gray-900"
           >
             {route.icon}
           </Link>

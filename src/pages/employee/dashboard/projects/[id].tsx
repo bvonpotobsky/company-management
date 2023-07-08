@@ -1,20 +1,19 @@
 import type {GetServerSidePropsContext, InferGetServerSidePropsType, NextPage} from "next";
-import Link from "next/link";
 import {format} from "date-fns";
 
-import {ChevronLeft} from "lucide-react";
+import {TimerOff, TimerReset} from "lucide-react";
 
-import {Button, buttonVariants} from "~/components/ui/button";
+import {Button} from "~/components/ui/button";
 import {Card, CardContent, CardDescription, CardTitle} from "~/components/ui/card";
 
 import ClockRealTime from "~/components/clock-real-time";
 import ShiftTime from "~/components/shift-time";
+import GoBackURL from "~/components/go-back-url";
 
 import EmployeeLayout from "~/components/layout.employee";
 
 import {generateSSGHelper} from "~/server/helpers/ssgHelper";
 import {api} from "~/utils/api";
-import GoBackURL from "~/components/go-back-url";
 
 export const getServerSideProps = async (context: GetServerSidePropsContext) => {
   const ssg = generateSSGHelper();
@@ -91,10 +90,21 @@ const ProjectIdPage: NextPage<ServerSideProps> = ({id}) => {
           </CardTitle>
 
           <CardContent className="flex items-center justify-center space-x-2 p-4">
-            <Button variant="outline" onClick={onClockIn} disabled={isEmployeeWorking}>
-              Clock In
+            <Button
+              variant="outline"
+              onClick={onClockIn}
+              disabled={isEmployeeWorking}
+              className="flex items-center font-semibold"
+            >
+              <TimerReset size={20} className="mr-2" /> Clock In
             </Button>
-            <Button variant="outline" onClick={onClockOut} disabled={!isEmployeeWorking}>
+            <Button
+              variant="outline"
+              onClick={onClockOut}
+              disabled={!isEmployeeWorking}
+              className="flex items-center font-semibold"
+            >
+              <TimerOff size={20} className="mr-2" />
               Clock Out
             </Button>
           </CardContent>
