@@ -3,8 +3,8 @@ import type {Route} from "~/lib/constants";
 
 const NavbarMobile: React.FC<{routes: Route[] & React.HTMLAttributes<HTMLDivElement>}> = ({routes, ...props}) => {
   return (
-    <div className="left-0 z-40 h-16 w-full opacity-95 dark:bg-black">
-      <nav className="mx-auto grid h-full max-w-lg grid-flow-col font-medium" {...props}>
+    <div className="w-full opacity-95 dark:bg-black">
+      <nav className="mx-auto grid h-16 max-w-lg grid-flow-col font-medium" {...props}>
         {routes?.map((route) => (
           <Link
             key={route.href}
