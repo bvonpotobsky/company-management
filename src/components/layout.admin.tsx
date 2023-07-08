@@ -17,7 +17,7 @@ const AdminLayout: React.FC<{children: ReactNode}> = ({children}) => {
 
   return (
     <AdminAuthProvider>
-      <main className="flex h-[100vh] flex-col overflow-hidden">
+      <main className="flex h-[100dvh] flex-col overflow-hidden">
         <nav className="w-full border-b">
           <div className="flex h-16 items-center px-4">
             <Logo />

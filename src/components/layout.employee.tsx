@@ -17,7 +17,7 @@ const EmployeeLayout: React.FC<{children: ReactNode}> = ({children}) => {
 
   return (
     <EmployeeAuthProvider>
-      <main className="flex h-screen flex-col">
+      <main className="flex h-[100dvh] flex-col overflow-hidden">
         <nav className="w-full border-b">
           <div className="flex h-16 items-center px-4">
             <Logo />
